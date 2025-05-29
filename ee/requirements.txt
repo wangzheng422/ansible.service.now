@@ -1,0 +1,3 @@
+# Python dependencies for ServiceNow Ansible collections
+# Add any specific Python packages needed here
+# Note: systemd-python may not be required for ServiceNow operations
