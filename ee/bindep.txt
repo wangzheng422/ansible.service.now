@@ -4,3 +4,4 @@ systemd-devel [platform:centos-8 platform:rhel-8 platform:centos-9 platform:rhel
 pkgconfig [platform:centos-8 platform:rhel-8 platform:centos-9 platform:rhel-9]
 gcc [platform:centos-8 platform:rhel-8 platform:centos-9 platform:rhel-9]
 python3-devel [platform:centos-8 platform:rhel-8 platform:centos-9 platform:rhel-9]
+libxml2-devel [platform:centos-8 platform:rhel-8 platform:centos-9 platform:rhel-9]
