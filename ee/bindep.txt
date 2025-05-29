@@ -1,6 +1,6 @@
 # System dependencies for Ansible Execution Environment
 # Required for systemd-python package compilation
-# systemd-devel [platform:centos-8 platform:rhel-8 platform:centos-9 platform:rhel-9]
-# pkgconfig [platform:centos-8 platform:rhel-8 platform:centos-9 platform:rhel-9]
-# gcc [platform:centos-8 platform:rhel-8 platform:centos-9 platform:rhel-9]
-# python3-devel [platform:centos-8 platform:rhel-8 platform:centos-9 platform:rhel-9]
+systemd-devel [platform:centos-8 platform:rhel-8 platform:centos-9 platform:rhel-9]
+pkgconfig [platform:centos-8 platform:rhel-8 platform:centos-9 platform:rhel-9]
+gcc [platform:centos-8 platform:rhel-8 platform:centos-9 platform:rhel-9]
+python3-devel [platform:centos-8 platform:rhel-8 platform:centos-9 platform:rhel-9]
