@@ -15,8 +15,6 @@
         msg: "host: {{ snow_instance }}"
     - debug:
         msg: "username: {{ snow_username }}"
-    - debug:
-        msg: "password: {{ snow_password }}"
 
     # Always give your tasks a useful name
     - name: Create incident
