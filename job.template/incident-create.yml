@@ -5,6 +5,11 @@
   collections:
     - servicenow.itsm
 
+  vars:
+    host: "{{ lookup('env', 'SN_HOST') }}"
+    username: "{{ lookup('env', 'SN_USERNAME') }}"
+    password: "{{ lookup('env', 'SN_PASSWORD') }}"
+
   tasks:
 
     # Always give your tasks a useful name
@@ -13,7 +18,9 @@
       # This task leverages the 'incident' module from the 'itsm' collection 
       # within the 'servicenow' namespace
       servicenow.itsm.incident:
-
+        # host: "{{ lookup('env', 'SN_HOST') }}"
+        # username: "{{ lookup('env', 'SN_USERNAME') }}"
+        # password: "{{ lookup('env', 'SN_PASSWORD') }}"
         state: new
         caller: "{{ lookup('env', 'SN_USERNAME') }}"
 
