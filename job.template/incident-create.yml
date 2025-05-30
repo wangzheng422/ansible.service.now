@@ -11,6 +11,12 @@
   #   password: "{{ lookup('env', 'SN_PASSWORD') }}"
 
   tasks:
+    - debug:
+        msg: "host: {{ lookup('env', 'SN_HOST') }}"
+    - debug:
+        msg: "username: {{ lookup('env', 'SN_USERNAME') }}"
+    - debug:
+        msg: "password: {{ lookup('env', 'SN_PASSWORD') }}"
 
     # Always give your tasks a useful name
     - name: Create incident
