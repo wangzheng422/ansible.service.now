@@ -24,11 +24,12 @@
       # This task leverages the 'incident' module from the 'itsm' collection 
       # within the 'servicenow' namespace
       servicenow.itsm.incident:
-        host: "{{ snow_instance }}"
-        username: "{{ snow_username }}"
-        password: "{{ snow_password }}"
+        instance:
+          host: "{{ snow_instance }}"
+          username: "{{ snow_username }}"
+          password: "{{ snow_password }}"
         state: new
-        caller: "{{ snow_password }}"
+        caller: "{{ snow_username }}"
 
         # Feel free to modify this line
         short_description: "User created a new incident using Ansible Automation Platform"
