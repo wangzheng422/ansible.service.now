@@ -5,11 +5,6 @@
   collections:
     - servicenow.itsm
 
-  # vars:
-  #   host: "{{ lookup('env', 'SN_HOST') }}"
-  #   username: "{{ lookup('env', 'SN_USERNAME') }}"
-  #   password: "{{ lookup('env', 'SN_PASSWORD') }}"
-
   tasks:
     - debug:
         msg: "host: {{ snow_instance }}"

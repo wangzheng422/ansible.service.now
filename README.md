@@ -30,3 +30,35 @@ If you encounter `systemd-python` compilation errors, ensure that:
 2. The base image has access to the required development packages
 
 The current configuration includes system dependencies to resolve common compilation issues with Python packages that require system libraries.
+
+## Build the aap EE
+
+```bash
+
+subscription-manager repos --list > list
+
+cat list | grep ansible
+# .....
+# Repo ID:   ansible-automation-platform-2.5-for-rhel-9-x86_64-rpms
+# .....
+
+subscription-manager repos --enable "ansible-automation-platform-2.5-for-rhel-9-x86_64-rpms"
+
+dnf install -y /usr/bin/ansible /usr/bin/ansible-builder
+
+git clone https://github.com/wangzheng422/ansible.service.now
+
+cd ansible.service.now/
+
+ansible-builder build -f ee/service.now.env.yml -t quay.io/wangzheng422/qimgs:ansible.service.now-2025.05.30-v01 -vvv
+
+# podman push quay.io/wangzheng422/qimgs:ansible.service.now-2025.05.29-v01
+
+podman push quay.io/wangzheng422/qimgs:ansible.service.now-2025.05.30-v01
+
+```
+
+## how to use with AAP 2.5
+
+Following docs here:
+- https://github.com/wangzheng422/docker_env/blob/dev/redhat/ocp4/4.18/2025.05.ansible.service.now.md
