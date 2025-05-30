@@ -12,11 +12,11 @@
 
   tasks:
     - debug:
-        msg: "host: {{ lookup('env', 'SN_HOST') }}"
+        msg: "host: {{ lookup('env', 'snow_instance') }}"
     - debug:
-        msg: "username: {{ lookup('env', 'SN_USERNAME') }}"
+        msg: "username: {{ lookup('env', 'snow_username') }}"
     - debug:
-        msg: "password: {{ lookup('env', 'SN_PASSWORD') }}"
+        msg: "password: {{ lookup('env', 'snow_password') }}"
 
     # Always give your tasks a useful name
     - name: Create incident
@@ -24,11 +24,11 @@
       # This task leverages the 'incident' module from the 'itsm' collection 
       # within the 'servicenow' namespace
       servicenow.itsm.incident:
-        host: "{{ lookup('env', 'SN_HOST') }}"
-        username: "{{ lookup('env', 'SN_USERNAME') }}"
+        host: "{{ lookup('env', 'snow_instance') }}"
+        username: "{{ lookup('env', 'snow_username') }}"
         password: "{{ lookup('env', 'SN_PASSWORD') }}"
         state: new
-        caller: "{{ lookup('env', 'SN_USERNAME') }}"
+        caller: "{{ lookup('env', 'snow_password') }}"
 
         # Feel free to modify this line
         short_description: "User created a new incident using Ansible Automation Platform"
