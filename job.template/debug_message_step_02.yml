@@ -3,7 +3,7 @@
   hosts: localhost
   connection: local
   vars:
-    playbook_to_run: "default_playbook_value"
+    playbook_to_run: "{{ gitlab_payload.playbook_to_run | default('default_playbook_value') }}"
   tasks:
     - name: Print "step 2 ok"
       debug:
