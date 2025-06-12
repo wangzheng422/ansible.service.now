@@ -1,0 +1,14 @@
+---
+- name: Output debug message with parameter
+  hosts: localhost
+  connection: local
+  vars:
+    playbook_to_run: "default_playbook_value"
+  tasks:
+    - name: Print "step 2 ok"
+      debug:
+        msg: "step 2 ok"
+
+    - name: Output playbook_to_run parameter
+      debug:
+        msg: "The playbook_to_run parameter is: {{ playbook_to_run }}"
