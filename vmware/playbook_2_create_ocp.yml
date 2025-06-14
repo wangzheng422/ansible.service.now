@@ -64,11 +64,25 @@
         datacenter: "{{ vcenter_datacenter }}"
         folder: "{{ vm_folder | default(omit) }}"
         name: "{{ item.name }}"
-        # 仅修改 customvalues，不改变其他任何东西
+        # 使用 state: present 来修改现有 VM 的配置
+        state: present
+        # 设置 advanced parameters
         customvalues:
           - key: 'disk.EnableUUID'
             value: 'TRUE'
-        # 可以选择在这里开机
+      loop: "{{ ocp_vms }}"
+      register: uuid_config_result
+
+    # --- 步骤 2.1: 确保 VM 处于关机状态 ---
+    - name: "Step 2.1: Ensure VM {{ item.name }} is powered off"
+      community.vmware.vmware_guest:
+        hostname: "{{ vcenter_hostname }}"
+        username: "{{ vcenter_username }}"
+        password: "{{ vcenter_password }}"
+        validate_certs: false
+        datacenter: "{{ vcenter_datacenter }}"
+        folder: "{{ vm_folder | default(omit) }}"
+        name: "{{ item.name }}"
         state: poweredoff
       loop: "{{ ocp_vms }}"
       register: final_vm_state # 将最终状态（包含MAC地址）注册到变量中
