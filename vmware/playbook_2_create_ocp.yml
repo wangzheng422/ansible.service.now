@@ -44,6 +44,8 @@
         networks:
           - name: "{{ vm_network }}"
             device_type: vmxnet3
+            # **已修改**: 从变量中设置 MAC 地址，如果未定义则忽略。
+            mac: "{{ item.mac | default(omit) }}"
         cdrom:
           - type: iso
             iso_path: "{{ ocp_iso_path }}"
