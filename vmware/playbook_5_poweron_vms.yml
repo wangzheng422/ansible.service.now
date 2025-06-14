@@ -1,0 +1,22 @@
+# =================================================================
+# playbook_4_poweron_vms.yml - (新) 剧本4: 开启所有 OCP 虚拟机
+# =================================================================
+---
+- name: "Power On All OCP VMs"
+  hosts: localhost
+  gather_facts: no
+  vars_files:
+    - vars.yml
+
+  tasks:
+    - name: "Ensure VM '{{ item.name }}' is powered on"
+      community.vmware.vmware_guest:
+        hostname: "{{ vcenter_hostname }}"
+        username: "{{ vcenter_username }}"
+        password: "{{ vcenter_password }}"
+        validate_certs: false
+        datacenter: "{{ vcenter_datacenter }}"
+        folder: "{{ vm_folder | default(omit) }}"
+        name: "{{ item.name }}"
+        state: poweredon
+      loop: "{{ ocp_vms }}"
