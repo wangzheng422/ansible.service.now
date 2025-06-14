@@ -15,7 +15,7 @@
         username: '{{ vcenter_username }}'
         password: '{{ vcenter_password }}'
         validate_certs: no
-        datacenter: '{{ datacenter_name }}'
+        datacenter: '{{ vcenter_datacenter }}'
       register: v
 
     - debug:
