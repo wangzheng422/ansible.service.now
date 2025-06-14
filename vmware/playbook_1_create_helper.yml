@@ -1,0 +1,42 @@
+
+# =================================================================
+# playbook_1_create_batch1.yml - 剧本1: 创建第一批虚拟机
+# =================================================================
+---
+- name: "Stage 1: Provision Batch 1 VMs"
+  hosts: localhost
+  gather_facts: no
+  vars_files:
+    - vars.yml
+
+  tasks:
+    - name: "Create Batch 1 VM: {{ item.name }}"
+      community.vmware.vmware_guest:
+        hostname: "{{ vcenter_hostname }}"
+        username: "{{ vcenter_username }}"
+        password: "{{ vcenter_password }}"
+        validate_certs: false
+        datacenter: "{{ vcenter_datacenter }}"
+        cluster: "{{ vcenter_cluster }}"
+        name: "{{ item.name }}"
+        state: poweredon
+        guest_id: "{{ guest_id }}"
+        hardware:
+          num_cpus: "{{ item.num_cpus }}"
+          memory_mb: "{{ item.memory_mb }}"
+        disk:
+          - size_gb: "{{ item.disk1_gb }}"
+            type: thin
+            datastore: "{{ vcenter_datastore }}"
+        networks:
+          - name: "{{ vm_network }}"
+            device_type: vmxnet3
+        cdrom:
+          - type: iso
+            iso_path: "{{ vm_iso_path }}"
+            state: present
+        customvalues:
+          - key: 'disk.EnableUUID'
+            value: '1'
+      loop: "{{ helper_vms }}"
+

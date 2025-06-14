@@ -1,0 +1,45 @@
+# =================================================================
+# vars/main.yml - 所有自定义参数 (被所有 Playbook 共享)
+# =================================================================
+---
+# vCenter 连接信息 (从环境变量加载)
+vcenter_hostname: "{{ lookup('env', 'VCENTER_HOSTNAME') }}"
+vcenter_username: "{{ lookup('env', 'VCENTER_USERNAME') }}"
+vcenter_password: "{{ lookup('env', 'VCENTER_PASSWORD') }}"
+vcenter_datacenter: "{{ lookup('env', 'VCENTER_DATACENTER') }}"
+vcenter_cluster: "{{ lookup('env', 'VCENTER_CLUSTER') }}"
+vcenter_datastore: "{{ lookup('env', 'VCENTER_DATASTORE') }}"
+vcenter_datastore_iso: "{{ lookup('env', 'VCENTER_DATASTORE_ISO') }}"
+
+# --- 全局虚拟机参数 ---
+# **这里就是您问的操作系统类型配置**
+guest_id: "rhel9_64Guest"
+vm_network: "{{ lookup('env', 'VCENTER_NETWORK') }}"
+vm_iso_path: "[{{ vcenter_datastore_iso }}] dummy-wzh/Rocky-9.4-x86_64-minimal.iso"
+ocp_iso_path: "[{{ vcenter_datastore_iso }}] dummy-wzh/agent.x86_64.iso"
+
+# --- 第一批虚拟机定义 (创建1台) ---
+helper_vms:
+  - name: "helper"
+    num_cpus: 4
+    memory_mb: 8192
+    disk1_gb: 100
+
+# --- 第二批虚拟机定义 (创建3台) ---
+ocp_vms:
+  - name: "ocp-master-01"
+    num_cpus: 16
+    memory_mb: 32768
+    disk1_gb: 120
+  - name: "ocp-master-02"
+    num_cpus: 16
+    memory_mb: 32768
+    disk1_gb: 120
+  - name: "ocp-master-03"
+    num_cpus: 16
+    memory_mb: 32768
+    disk1_gb: 120
+
+# --- 为第二批虚拟机附加的额外硬盘的参数 ---
+batch2_extra_disk_gb: 100
+
