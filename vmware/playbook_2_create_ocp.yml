@@ -54,9 +54,9 @@
             unit_number: 0
       loop: "{{ ocp_vms }}"
 
-    # --- 步骤 2: 修改现有虚拟机以启用 disk.EnableUUID ---
+    # --- 步骤 2: 使用 vmware_vm_config 模块设置 disk.EnableUUID ---
     - name: "Step 2: Enable disk UUID on VM {{ item.name }}"
-      community.vmware.vmware_guest:
+      community.vmware.vmware_vm_config:
         hostname: "{{ vcenter_hostname }}"
         username: "{{ vcenter_username }}"
         password: "{{ vcenter_password }}"
@@ -64,10 +64,8 @@
         datacenter: "{{ vcenter_datacenter }}"
         folder: "{{ vm_folder | default(omit) }}"
         name: "{{ item.name }}"
-        # 使用 state: present 来修改现有 VM 的配置
-        state: present
-        # 设置 advanced parameters
-        customvalues:
+        # 设置 VM 的 advanced configuration parameters
+        advanced_settings:
           - key: 'disk.EnableUUID'
             value: 'TRUE'
       loop: "{{ ocp_vms }}"
