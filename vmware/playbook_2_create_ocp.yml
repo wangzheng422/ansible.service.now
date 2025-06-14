@@ -65,7 +65,7 @@
         folder: "{{ vm_folder | default(omit) }}"
         name: "{{ item.name }}"
         # 仅修改 customvalues，不改变其他任何东西
-        customvalues:
+        advanced_settings:
           - key: 'disk.EnableUUID'
             value: 'TRUE'
         # 可以选择在这里开机
