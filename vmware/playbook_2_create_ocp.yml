@@ -18,7 +18,7 @@
         datacenter: "{{ vcenter_datacenter }}"
         cluster: "{{ vcenter_cluster }}"
         name: "{{ item.name }}"
-        state: poweredon
+        state: poweredoff
         guest_id: "{{ guest_id }}"
         hardware:
           num_cpus: "{{ item.num_cpus }}"
