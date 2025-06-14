@@ -30,22 +30,22 @@ ocp_iso_path: "[{{ vcenter_datastore_iso }}] dummy-wzh/agent.x86_64.iso"
 
 # --- 第一批虚拟机定义 (创建1台) ---
 helper_vms:
-  - name: "helper"
+  - name: "wzh-helper"
     num_cpus: 4
     memory_mb: 8192
     disk1_gb: 100
 
 # --- 第二批虚拟机定义 (创建3台) ---
 ocp_vms:
-  - name: "ocp-master-01"
+  - name: "wzh-ocp-master-01"
     num_cpus: 16
     memory_mb: 32768
     disk1_gb: 120
-  - name: "ocp-master-02"
+  - name: "wzh-ocp-master-02"
     num_cpus: 16
     memory_mb: 32768
     disk1_gb: 120
-  - name: "ocp-master-03"
+  - name: "wzh-ocp-master-03"
     num_cpus: 16
     memory_mb: 32768
     disk1_gb: 120
