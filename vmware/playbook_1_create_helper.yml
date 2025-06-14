@@ -18,6 +18,8 @@
         validate_certs: false
         datacenter: "{{ vcenter_datacenter }}"
         cluster: "{{ vcenter_cluster }}"
+        # 如果 vm_folder 变量为空, `default(omit)` 会让 Ansible 忽略此参数。
+        folder: "{{ vm_folder | default(omit) }}"
         name: "{{ item.name }}"
         state: poweredon
         guest_id: "{{ guest_id }}"

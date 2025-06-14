@@ -11,6 +11,15 @@ vcenter_cluster: "{{ lookup('env', 'VCENTER_CLUSTER') }}"
 vcenter_datastore: "{{ lookup('env', 'VCENTER_DATASTORE') }}"
 vcenter_datastore_iso: "{{ lookup('env', 'VCENTER_DATASTORE_ISO') }}"
 
+# 指定用于存放虚拟机的 vCenter 文件夹。
+# 路径必须是完整的 inventory 路径, 从数据中心根目录开始。
+# 如果该文件夹不存在, Ansible 会自动创建它。
+# 如果将此值留空 ("")，虚拟机将被创建在数据中心的根目录下。
+# 示例: "/{{ vcenter_datacenter }}/vm/Linux_Servers/RHEL9"
+folder_name: "{{ lookup('env', 'VCENTER_VM_FOLDER') }}"
+vm_folder: "/{{ vcenter_datacenter }}/Workloads/{{ folder_name }}"
+
+
 # --- 全局虚拟机参数 ---
 # **这里就是您问的操作系统类型配置**
 guest_id: "rhel9_64Guest"
