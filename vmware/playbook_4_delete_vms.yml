@@ -1,0 +1,23 @@
+# =================================================================
+# playbook_3_delete_vms.yml - (新) 剧本3: 删除 OCP 虚拟机
+# =================================================================
+---
+- name: "Destructive Operation: Delete OCP VMs"
+  hosts: localhost
+  gather_facts: no
+  vars_files:
+    - vars.yml
+
+  tasks:
+    - name: "Delete VM: {{ item.name }}"
+      community.vmware.vmware_guest:
+        hostname: "{{ vcenter_hostname }}"
+        username: "{{ vcenter_username }}"
+        password: "{{ vcenter_password }}"
+        validate_certs: false
+        datacenter: "{{ vcenter_datacenter }}"
+        folder: "{{ vm_folder | default(omit) }}"
+        name: "{{ item.name }}"
+        # state: absent 会确保虚拟机被关闭并从 vCenter 中彻底删除
+        state: absent
+      loop: "{{ ocp_vms }}"
