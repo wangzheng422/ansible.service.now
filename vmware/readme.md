@@ -22,12 +22,12 @@ README.md - 项目说明和使用指南 (3-Playbook 版本)
 在运行 Playbook 之前，请先设置好以下环境变量：
 
 ```bash
-  export VCENTER_HOSTNAME="vcsnsx-vc.xxxxxx.com"
-  export VCENTER_USERNAME="sandbox-xxxxxxx@demo"
-  export VCENTER_PASSWORD="YOUR_VCENTER_PASSWORD"
-  export VCENTER_DATACENTER="Your_Datacenter_Name"
-  export VCENTER_CLUSTER="Your_Cluster_Name"
-  export VCENTER_DATASTORE="Your_Datastore_Name"
+export VCENTER_HOSTNAME="vcsnsx-vc.xxxxxx.com"
+export VCENTER_USERNAME="sandbox-xxxxxxx@demo"
+export VCENTER_PASSWORD="YOUR_VCENTER_PASSWORD"
+export VCENTER_DATACENTER="Your_Datacenter_Name"
+export VCENTER_CLUSTER="Your_Cluster_Name"
+export VCENTER_DATASTORE="Your_Datastore_Name"
 ```
 
 -----
