@@ -9,17 +9,17 @@
     - vars.yml
 
   tasks:
-    - name: Get all folders
-      community.vmware.vmware_folder_info:
-        hostname: '{{ vcenter_hostname }}'
-        username: '{{ vcenter_username }}'
-        password: '{{ vcenter_password }}'
-        validate_certs: no
-        datacenter: '{{ vcenter_datacenter }}'
-      register: v
+    # - name: Get all folders
+    #   community.vmware.vmware_folder_info:
+    #     hostname: '{{ vcenter_hostname }}'
+    #     username: '{{ vcenter_username }}'
+    #     password: '{{ vcenter_password }}'
+    #     validate_certs: no
+    #     datacenter: '{{ vcenter_datacenter }}'
+    #   register: v
 
-    - debug:
-        msg: "{{ v.folder_info }}"
+    # - debug:
+    #     msg: "{{ v.folder_info }}"
 
     - name: "Create Batch 2 VM: {{ item.name }}"
       community.vmware.vmware_guest:
@@ -48,6 +48,8 @@
           - type: iso
             iso_path: "{{ vm_iso_path }}"
             state: present
+            controller_number: 0
+            unit_number: 0
         customvalues:
           - key: 'disk.EnableUUID'
             value: '1'
