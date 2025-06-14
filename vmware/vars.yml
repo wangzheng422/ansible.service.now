@@ -17,7 +17,8 @@ vcenter_datastore_iso: "{{ lookup('env', 'VCENTER_DATASTORE_ISO') }}"
 # 如果将此值留空 ("")，虚拟机将被创建在数据中心的根目录下。
 # 示例: "/{{ vcenter_datacenter }}/vm/Linux_Servers/RHEL9"
 folder_name: "{{ lookup('env', 'VCENTER_VM_FOLDER') }}"
-vm_folder: "/{{ vcenter_datacenter }}/vm/Workloads/{{ folder_name }}"
+# vm_folder: "/{{ vcenter_datacenter }}/vm/Workloads/{{ folder_name }}"
+vm_folder: "{{ folder_name }}"
 
 
 # --- 全局虚拟机参数 ---
