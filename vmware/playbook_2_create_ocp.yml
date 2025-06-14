@@ -71,11 +71,12 @@
       loop: "{{ ocp_vms }}"
       register: final_vm_state # 将最终状态（包含MAC地址）注册到变量中
 
-    # --- (新) 步骤 3: 输出新创建虚拟机的 MAC 地址 ---
+    # --- (已修正) 步骤 3: 输出新创建虚拟机的 MAC 地址 ---
     - name: "Step 3: Display MAC addresses for created VMs"
       ansible.builtin.debug:
-        msg: "VM '{{ item.item.name }}' has MAC address: {{ item.instance.mac_address }}"
+        msg: "VM '{{ item.item.name }}' has MAC address: {{ item.instance.hw_eth0.macaddress }}"
       loop: "{{ final_vm_state.results }}"
       when:
         - item.instance is defined
-        - item.instance.mac_address is defined
+        - item.instance.hw_eth0 is defined
+        - item.instance.hw_eth0.macaddress is defined
