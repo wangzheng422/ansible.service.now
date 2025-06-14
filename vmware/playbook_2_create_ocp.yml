@@ -46,7 +46,7 @@
             device_type: vmxnet3
         cdrom:
           - type: iso
-            iso_path: "{{ vm_iso_path }}"
+            iso_path: "{{ ocp_iso_path }}"
             state: present
             controller_number: 0
             unit_number: 0
