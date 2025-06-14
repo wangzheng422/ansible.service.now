@@ -37,6 +37,8 @@
           - type: iso
             iso_path: "{{ vm_iso_path }}"
             state: present
+            controller_number: 0
+            unit_number: 0
         customvalues:
           - key: 'disk.EnableUUID'
             value: '1'

@@ -21,7 +21,7 @@
           - size_gb: "{{ batch2_extra_disk_gb }}"
             type: thin
             datastore: "{{ vcenter_datastore }}"
-            scsi_controller: 0
+            scsi_controller: 1 # 使用不同的控制器以避免与系统盘冲突
             scsi_type: 'paravirtual'
             state: present
       loop: "{{ batch2_vms }}"
