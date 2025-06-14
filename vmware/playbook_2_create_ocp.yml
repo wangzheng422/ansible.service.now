@@ -67,7 +67,7 @@
           - key: 'disk.EnableUUID'
             value: '1'
         # 可以选择在这里开机
-        state: poweredon
+        state: poweredoff
       loop: "{{ ocp_vms }}"
       register: final_vm_state # 将最终状态（包含MAC地址）注册到变量中
 

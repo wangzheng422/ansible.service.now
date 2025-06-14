@@ -20,4 +20,5 @@
         name: "{{ item.name }}"
         # state: absent 会确保虚拟机被关闭并从 vCenter 中彻底删除
         state: absent
+        force: yes
       loop: "{{ ocp_vms }}"
