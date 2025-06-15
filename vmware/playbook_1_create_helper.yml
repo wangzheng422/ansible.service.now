@@ -55,7 +55,7 @@
         # 在硬件配置中启用 disk UUID
         advanced_settings:
           - key: 'guestinfo.ks.data'
-            value: "{{ lookup('file', 'helper-ks-rocky9.cfg') | b64encode }}"
+            value: "{{ lookup('file', 'helper-ks-rocky9.cfg') | b64encode | replace('\n', '') }}"
           - key: 'guestinfo.ks.data.encoding'
             value: 'base64' 
           - key: 'linux.boot.command_line'
