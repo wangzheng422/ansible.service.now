@@ -33,7 +33,7 @@ helper_vms:
   - name: "wzh-helper"
     num_cpus: 4
     memory_mb: 8192
-    disk1_gb: 100
+    disk1_gb: 80
 
 # --- 第二批虚拟机定义 (创建3台) ---
 ocp_vms:
