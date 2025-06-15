@@ -41,24 +41,24 @@
             unit_number: 0
       loop: "{{ helper_vms }}"
 
-    # --- 步骤 2: 使用 vmware_guest 重新配置 VM 以启用 disk.EnableUUID ---
-    - name: "Step 2: Reconfigure VM {{ item.name }} to enable disk UUID"
-      community.vmware.vmware_guest:
-        hostname: "{{ vcenter_hostname }}"
-        username: "{{ vcenter_username }}"
-        password: "{{ vcenter_password }}"
-        validate_certs: false
-        datacenter: "{{ vcenter_datacenter }}"
-        folder: "{{ vm_folder | default(omit) }}"
-        name: "{{ item.name }}"
-        state: present
-        # 在硬件配置中启用 disk UUID
-        advanced_settings:
-          - key: 'guestinfo.ks.data'
-            value: "{{ lookup('file', 'helper-ks-rocky9.cfg') | b64encode | replace('\n', '') }}"
-          - key: 'guestinfo.ks.data.encoding'
-            value: 'base64' 
-          - key: 'linux.boot.command_line'
-            value: 'inst.ks=vmware'
-      loop: "{{ helper_vms }}"
-      register: uuid_config_result
+    # # --- 步骤 2: 使用 vmware_guest 重新配置 VM 以启用 disk.EnableUUID ---
+    # - name: "Step 2: Reconfigure VM {{ item.name }} to enable kickstart"
+    #   community.vmware.vmware_guest:
+    #     hostname: "{{ vcenter_hostname }}"
+    #     username: "{{ vcenter_username }}"
+    #     password: "{{ vcenter_password }}"
+    #     validate_certs: false
+    #     datacenter: "{{ vcenter_datacenter }}"
+    #     folder: "{{ vm_folder | default(omit) }}"
+    #     name: "{{ item.name }}"
+    #     state: present
+    #     # 在硬件配置中启用 disk UUID
+    #     advanced_settings:
+    #       - key: 'guestinfo.ks.data'
+    #         value: "{{ lookup('file', 'helper-ks-rocky9.cfg') | b64encode | replace('\n', '') }}"
+    #       - key: 'guestinfo.ks.data.encoding'
+    #         value: 'base64' 
+    #       - key: 'linux.boot.command_line'
+    #         value: 'inst.ks=vmware'
+    #   loop: "{{ helper_vms }}"
+    #   register: uuid_config_result
