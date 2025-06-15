@@ -53,3 +53,6 @@ export VCENTER_DATASTORE="Your_Datastore_Name"
    ansible-playbook playbook_3_attach_disk.yml
 
 =================================================================
+
+
+base64 -w0 helper-ks-rocky9.cfg
