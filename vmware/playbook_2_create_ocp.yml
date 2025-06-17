@@ -37,6 +37,7 @@
         hardware:
           num_cpus: "{{ item.num_cpus }}"
           memory_mb: "{{ item.memory_mb }}"
+          nested_virt: true
         disk:
           - size_gb: "{{ item.disk1_gb }}"
             type: thin
