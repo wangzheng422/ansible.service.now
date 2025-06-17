@@ -37,7 +37,7 @@
         hardware:
           num_cpus: "{{ item.num_cpus }}"
           memory_mb: "{{ item.memory_mb }}"
-          nested_virt: true
+          # nested_virt: true
         disk:
           - size_gb: "{{ item.disk1_gb }}"
             type: thin
@@ -56,7 +56,7 @@
       loop: "{{ ocp_vms }}"
 
     # --- 步骤 2: 使用 vmware_guest 重新配置 VM 以启用 disk.EnableUUID ---
-    - name: "Step 2: Reconfigure VM {{ item.name }} to enable disk UUID"
+    - name: "Step 2: Reconfigure VM {{ item.name }} to enable disk UUID and apply the advanced settings"
       community.vmware.vmware_guest:
         hostname: "{{ vcenter_hostname }}"
         username: "{{ vcenter_username }}"
@@ -66,6 +66,8 @@
         folder: "{{ vm_folder | default(omit) }}"
         name: "{{ item.name }}"
         state: present
+        hardware:
+          nested_virt: true
         # 在硬件配置中启用 disk UUID
         advanced_settings:
           - key: 'disk.EnableUUID'
