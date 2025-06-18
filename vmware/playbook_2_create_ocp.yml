@@ -67,6 +67,8 @@
         name: "{{ item.name }}"
         state: present
         hardware:
+          num_cpus: "{{ item.num_cpus }}"
+          memory_mb: "{{ item.memory_mb }}"
           nested_virt: true
         # 在硬件配置中启用 disk UUID
         advanced_settings:
