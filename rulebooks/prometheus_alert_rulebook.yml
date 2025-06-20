@@ -9,7 +9,7 @@
     - name: Process Prometheus Alert
       condition: event.payload.alerts is defined
       action:
-        run_workflow_job_template:
+        run_workflow_template:
           name: "workflow-incident-change-request" # Placeholder: Replace with your actual AAP Workflow Template name
           organization: "Default" # Placeholder: Replace with your actual AAP Organization name
           extra_vars:
