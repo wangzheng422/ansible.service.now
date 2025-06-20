@@ -52,7 +52,7 @@ curl -X POST -H "Content-Type: application/json" \
     }
   ]
 }' \
-http://YOUR_EDA_HOST:5000
+http://wzh-test-01-aap.apps.cluster-snw5f-1.dynamic.redhatworkshops.io
 
 
 ```
