@@ -4,7 +4,7 @@
   sources:
     - ansible.eda.webhook:
         host: 0.0.0.0
-        port: 50001
+        port: 5001
   rules:
     - name: Process Prometheus Alert
       condition: event.payload.alerts is defined
