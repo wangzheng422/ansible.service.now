@@ -8,7 +8,7 @@
   vars:
     # incident_number_cached is expected to be passed as an extra var or from a previous workflow step
     incident_number: "{{ incident_number_cached | default('') }}"
-    current_datetime: "{{ ansible_date_time.year }}-{{ ansible_date_time.month }}-{{ ansible_date_time.day }}-{{ ansible_date_time.hour }}:{{ ansible_date_time.minute }}:{{ ansible_date_time.second }}"
+    current_datetime: "{{ ansible_date_time.year }}-{{ ansible_date_time.month }}-{{ ansible_date_time.day }} {{ ansible_date_time.hour }}:{{ ansible_date_time.minute }}:{{ ansible_date_time.second }}"
 
   tasks:
     - name: Gather current date and time facts
