@@ -40,6 +40,11 @@
         incident_number_cached: "{{ new_incident.record.number }}"
         cacheable: true
 
+    - name: Set incident_number_cached as a statistic for workflow
+      ansible.builtin.set_stats:
+        data:
+          incident_number_cached: "{{ new_incident.record.number }}"
+
     - debug:
 
         # Use the output of the incident creation task to display the incident number
