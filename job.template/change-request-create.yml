@@ -29,17 +29,18 @@
         description: "This change request is automatically created and associated with incident {{ incident_number }}."
       register: new_change_request
 
-    - name: Add Work Note to Change Request
-      servicenow.itsm.change_request:
+    - name: Add Work Note to Change Request using snow_record
+      servicenow.servicenow.snow_record:
         instance:
           host: "{{ snow_instance }}"
           username: "{{ snow_username }}"
           password: "{{ snow_password }}"
+        table: change_request
         sys_id: "{{ new_change_request.record.sys_id }}"
-        state: "{{ new_change_request.record.state }}" # Keep the current state
-        work_notes: |
-          Incident {{ incident_number }} is related to this change request.
-          playbook_to_run: gen-ai-patch/{{ current_datetime }}/patch.yml
+        data:
+          work_notes: |
+            Incident {{ incident_number }} is related to this change request.
+            playbook_to_run: gen-ai-patch/{{ current_datetime }}/patch.yml
       when: new_change_request.record.sys_id is defined and incident_number is not none and incident_number != ''
 
     - debug:
