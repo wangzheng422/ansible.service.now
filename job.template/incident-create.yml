@@ -32,6 +32,8 @@
         description: "User {{ snow_username }} successfully created a new incident! Date: {{ lookup('pipe', \"date '+%Y-%m-%d %H:%M:%S'\") }}\nPrometheus Alert Content:\n{{ prometheus_alert_content | default('N/A') }}"
         impact: low
         urgency: low
+        other:
+          additional_comments: "User {{ snow_username }} successfully created a new incident! Date: {{ lookup('pipe', \"date '+%Y-%m-%d %H:%M:%S'\") }}\nPrometheus Alert Content:\n{{ prometheus_alert_content | default('N/A') }}"
       
       # Register the output of this task for use within subsequent tasks
       register: new_incident
