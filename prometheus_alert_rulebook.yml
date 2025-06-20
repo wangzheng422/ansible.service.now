@@ -1,0 +1,17 @@
+---
+- name: Listen for Prometheus alerts and trigger AAP workflow
+  hosts: localhost
+  sources:
+    - name: PrometheusAlerts
+      ansible.eda.webhook:
+        host: 0.0.0.0
+        port: 50001
+  rules:
+    - name: Process Prometheus Alert
+      condition: event.payload.alerts is defined
+      action:
+        run_job_template:
+          name: "Create Incident from Prometheus Alert" # Placeholder: Replace with your actual AAP Job Template name
+          organization: "Default" # Placeholder: Replace with your actual AAP Organization name
+          extra_vars:
+            prometheus_alert_content: "{{ event.payload | to_nice_json }}"

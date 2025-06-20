@@ -29,7 +29,7 @@
 
         # These fields can also contain different variables from previous workflow steps,
         # environment variables, etc.. Feel free to modify this line
-        description: "User {{ lookup('env', 'SN_USERNAME') }} successfully created a new incident! Date: {{ lookup('pipe', 'date +%Y-%m-%d-%H-%M-%S') }}"
+        description: "User {{ lookup('env', 'SN_USERNAME') }} successfully created a new incident! Date: {{ lookup('pipe', 'date +%Y-%m-%d-%H-%M-%S') }}\nPrometheus Alert Content:\n{{ prometheus_alert_content | default('N/A') }}"
         impact: low
         urgency: low
       
