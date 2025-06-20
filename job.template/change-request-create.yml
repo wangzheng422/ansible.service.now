@@ -37,9 +37,10 @@
           password: "{{ snow_password }}"
         state: present
         sys_id: "{{ new_change_request.record.sys_id }}"
-        work_notes: |
-          Incident {{ incident_number }} is related to this change request.
-          playbook_to_run: gen-ai-patch/{{ current_datetime }}/patch.yml
+        other:
+          work_notes: |
+            Incident {{ incident_number }} is related to this change request.
+            playbook_to_run: gen-ai-patch/{{ current_datetime }}/patch.yml
       when: new_change_request.record.sys_id is defined and incident_number is not none and incident_number != ''
 
     - debug:
