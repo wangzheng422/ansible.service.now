@@ -1,0 +1,47 @@
+---
+- name: Create Change Request and Associate Incident
+  hosts: localhost
+  connection: local
+  collections:
+    - servicenow.itsm
+
+  vars:
+    # incident_number_cached is expected to be passed as an extra var or from a previous workflow step
+    incident_number: "{{ incident_number_cached | default('') }}"
+    current_datetime: "{{ ansible_date_time.year | last(2) }}-{{ ansible_date_time.month }}-{{ ansible_date_time.day }}-{{ ansible_date_time.hour }}-{{ ansible_date_time.minute }}-{{ ansible_date_time.second }}-{{ ansible_date_time.microsecond }}"
+
+  tasks:
+    - name: Gather current date and time facts
+      ansible.builtin.setup:
+        gather_subset:
+          - date_time
+      delegate_to: localhost
+      run_once: true
+
+    - name: Create Change Request
+      servicenow.itsm.change_request:
+        instance:
+          host: "{{ snow_instance }}"
+          username: "{{ snow_username }}"
+          password: "{{ snow_password }}"
+        state: new
+        short_description: "Automated Change Request for Incident {{ incident_number }}"
+        description: "This change request is automatically created and associated with incident {{ incident_number }}."
+      register: new_change_request
+
+    - name: Add Work Note to Change Request
+      servicenow.itsm.change_request:
+        instance:
+          host: "{{ snow_instance }}"
+          username: "{{ snow_username }}"
+          password: "{{ snow_password }}"
+        sys_id: "{{ new_change_request.record.sys_id }}"
+        state: "{{ new_change_request.record.state }}" # Keep the current state
+        work_notes: |
+          Incident {{ incident_number }} is related to this change request.
+          playbook_to_run: gen-ai-patch/{{ current_datetime }}/patch.yml
+      when: new_change_request.record.sys_id is defined and incident_number is not none and incident_number != ''
+
+    - debug:
+        msg: "New Change Request created: {{ new_change_request.record.number }}"
+      when: new_change_request.record.number is defined
