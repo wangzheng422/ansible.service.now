@@ -13,4 +13,4 @@
           name: "workflow-incident-change-request" # Placeholder: Replace with your actual AAP Workflow Template name
           organization: "Default" # Placeholder: Replace with your actual AAP Organization name
           extra_vars:
-            prometheus_alert_content: "{{ event.payload }}"
+            prometheus_alert_content: "debug alert content"
