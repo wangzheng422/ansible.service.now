@@ -25,11 +25,11 @@
         caller: "{{ snow_username }}"
 
         # Feel free to modify this line
-        short_description: "User created a new incident using Ansible Automation Platform - {{ lookup('pipe', 'date +%Y-%m-%d %H:%M:%S') }}"
+        short_description: "User created a new incident using Ansible Automation Platform - {{ lookup('pipe', \"date '+%Y-%m-%d %H:%M:%S'\") }}"
 
         # These fields can also contain different variables from previous workflow steps,
         # environment variables, etc.. Feel free to modify this line
-        description: "User {{ username }} successfully created a new incident! Date: {{ lookup('pipe', 'date +%Y-%m-%d %H:%M:%S') }}\nPrometheus Alert Content:\n{{ prometheus_alert_content | default('N/A') }}"
+        description: "User {{ username }} successfully created a new incident! Date: {{ lookup('pipe', \"date '+%Y-%m-%d %H:%M:%S'\") }}\nPrometheus Alert Content:\n{{ prometheus_alert_content | default('N/A') }}"
         impact: low
         urgency: low
       
