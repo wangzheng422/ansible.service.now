@@ -49,7 +49,7 @@
         state: present
         number: "{{ new_incident.record.number }}"
         other:
-          worker_notes: "User {{ snow_username }} successfully created a new incident! Date: {{ lookup('pipe', \"date '+%Y-%m-%d %H:%M:%S'\") }}\nPrometheus Alert Content:\n{{ prometheus_alert_content | default('N/A') }}"
+          work_notes: "User {{ snow_username }} successfully created a new incident! Date: {{ lookup('pipe', \"date '+%Y-%m-%d %H:%M:%S'\") }}\nPrometheus Alert Content:\n{{ prometheus_alert_content | default('N/A') }}"
 
     - set_fact:
         incident_number_cached: "{{ new_incident.record.number }}"
