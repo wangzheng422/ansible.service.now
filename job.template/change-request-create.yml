@@ -60,11 +60,11 @@
           username: "{{ snow_username }}"
           password: "{{ snow_password }}"
         state: present
-        sys_id: "{{ incident_details.record.sys_id }}"
+        sys_id: "{{ incident_details.record[0].sys_id }}"
         change_request: "{{ new_change_request.record.sys_id }}"
       when:
         - new_change_request.record.sys_id is defined
-        - incident_details.record.sys_id is defined
+        - incident_details.record[0].sys_id is defined
         - incident_number is not none and incident_number != ''
 
     - debug:
