@@ -53,6 +53,10 @@
       register: incident_details
       when: incident_number is not none and incident_number != ''
 
+    - debug:
+        msg: "incident_details content: {{ incident_details }}"
+      when: incident_details is defined and incident_number is not none and incident_number != ''
+
     - name: Update Incident with Change Request Link
       servicenow.itsm.incident:
         instance:
