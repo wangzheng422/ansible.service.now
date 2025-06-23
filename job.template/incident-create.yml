@@ -5,6 +5,10 @@
   collections:
     - servicenow.itsm
 
+  vars:
+    # incident_number_cached is expected to be passed as an extra var or from a previous workflow step
+    prometheus_alert_content: "{{ ansible_eda.event.payload | default('N/A') }}"
+
   tasks:
     - debug:
         msg: "host: {{ snow_instance }}"
