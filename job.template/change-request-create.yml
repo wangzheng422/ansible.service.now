@@ -65,7 +65,8 @@
           password: "{{ snow_password }}"
         state: present
         sys_id: "{{ incident_details.records[0].sys_id }}"
-        change_request: "{{ new_change_request.record.sys_id }}"
+        other:
+          change_request: "{{ new_change_request.record.sys_id }}"
       when:
         - new_change_request.record.sys_id is defined
         - incident_details.records[0].sys_id is defined
