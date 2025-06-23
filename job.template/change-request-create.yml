@@ -64,9 +64,11 @@
           username: "{{ snow_username }}"
           password: "{{ snow_password }}"
         state: present
-        number: "{{ incident_number }}"
+        sys_id: "{{ incident_details.records[0].sys_id }}"
         other:
           change_request: "{{ new_change_request.record.sys_id }}"
+          related_records:
+            change_request: "{{ new_change_request.record.sys_id }}"
       when:
         - new_change_request.record.sys_id is defined
         - incident_details.records[0].sys_id is defined
