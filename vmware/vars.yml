@@ -54,5 +54,5 @@ ocp_vms:
     mac: "00:50:56:8e:02:b4"
 
 # --- 为第二批虚拟机附加的额外硬盘的参数 ---
-batch2_extra_disk_gb: 150
+batch2_extra_disk_gb: 200
 
