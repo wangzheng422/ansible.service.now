@@ -42,11 +42,11 @@
         msg: "Template file {{ source_path }} does not exist"
       when: not template_stat.stat.exists
 
-    - name: Ensure target directory for new repo exists
-      ansible.builtin.file:
-        path: "{{ cloned_repo_path }}"
-        state: directory
-        mode: '0755'
+    # - name: Ensure target directory for new repo exists
+    #   ansible.builtin.file:
+    #     path: "{{ cloned_repo_path }}"
+    #     state: directory
+    #     mode: '0755'
 
     - name: Clone the new Git repository
       ansible.builtin.command:
@@ -93,7 +93,7 @@
     - name: Show contents of cloned repo
       debug:
         msg: "{{ files_in_cloned_repo.stdout_lines }}"
-        
+
     - name: Check current git status in cloned repo
       ansible.builtin.command:
         cmd: git status --porcelain
