@@ -12,7 +12,8 @@
     # Branch name for the template
     template_branch: "template-{{ timestamp }}"
     # Source and destination paths
-    source_path: "job.template/{{ template_file }}"
+    # source_path: "job.template/{{ template_file }}"
+    source_path: "{{ template_file }}"
     plan_folder: "plan"
     dest_filename: "{{ timestamp }}.yml"
     
