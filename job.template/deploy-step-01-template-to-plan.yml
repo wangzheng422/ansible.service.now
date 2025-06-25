@@ -18,7 +18,7 @@
     dest_filename: "{{ timestamp }}.yml"
     github_repo_auto_url: "{{ lookup('env', 'GITHUB_REPO_AUTO') }}"
     cloned_repo_dir_name: "tmp_github_repo_auto"
-    cloned_repo_path: "{{ playbook_dir }}/../{{ cloned_repo_dir_name }}"
+    cloned_repo_path: "{{ playbook_dir }}/{{ cloned_repo_dir_name }}"
     
   tasks:
     - name: Gather current date and time facts
@@ -51,7 +51,7 @@
     - name: Clone the new Git repository
       ansible.builtin.command:
         cmd: "git clone https://oauth2:{{ lookup('env', 'GITHUB_TOKEN') }}@{{ github_repo_auto_url | regex_replace('^https?://', '') }} {{ cloned_repo_dir_name }}"
-        chdir: "{{ playbook_dir }}/../" # Clone into the parent directory
+        chdir: "{{ playbook_dir }}/" # Clone into the parent directory
       args:
         creates: "{{ cloned_repo_path }}" # Only run if the directory doesn't exist
       register: git_clone_result
