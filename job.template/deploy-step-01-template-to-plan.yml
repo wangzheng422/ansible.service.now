@@ -59,7 +59,7 @@
     - name: List files in current directory
       ansible.builtin.command:
         cmd: ls -laR .
-        chdir: "{{ playbook_dir }}"
+        chdir: "/var/lib/awx/projects"
       register: ls_current_dir
       changed_when: false
     - debug:
