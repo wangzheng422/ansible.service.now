@@ -84,6 +84,16 @@
       debug:
         msg: "github token: {{ lookup('env', 'GITHUB_TOKEN') }}"
 
+    - name: Display files under cloned_repo_path for verification
+      ansible.builtin.command:
+        cmd: "ls -laR {{ cloned_repo_path }}"
+      register: files_in_cloned_repo
+      changed_when: false # This command doesn't change state
+
+    - name: Show contents of cloned repo
+      debug:
+        msg: "{{ files_in_cloned_repo.stdout_lines }}"
+        
     - name: Check current git status in cloned repo
       ansible.builtin.command:
         cmd: git status --porcelain
