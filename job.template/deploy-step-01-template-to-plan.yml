@@ -16,7 +16,7 @@
     source_path: "{{ template_file }}"
     plan_folder: "plan"
     dest_filename: "{{ timestamp }}.yml"
-    github_repo_auto_url: "{{ lookup('env', 'GITHUB_REPO_AUTO') }}"
+    github_repo_auto_url: "{{ GITHUB_REPO_AUTO }}"
     cloned_repo_dir_name: "tmp_github_repo_auto"
     cloned_repo_path: "{{ playbook_dir }}/{{ cloned_repo_dir_name }}"
     
