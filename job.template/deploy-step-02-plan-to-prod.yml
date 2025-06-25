@@ -41,6 +41,21 @@
         msg: "Clone result: {{ git_clone_result }}"
       when: git_clone_result is defined and git_clone_result.rc == 0
 
+    - name: Check current git branch
+      ansible.builtin.command:
+        cmd: git branch --show-current
+        chdir: "{{ cloned_repo_path }}"
+      register: current_branch
+      changed_when: false
+
+    - name: Switch to template branch
+      ansible.builtin.command:
+        cmd: git checkout {{ template_branch }}
+        chdir: "{{ cloned_repo_path }}"
+      register: git_checkout_template
+      changed_when: true
+      when: current_branch.stdout != template_branch
+
     - name: Display variables being used
       debug:
         msg: |
@@ -63,21 +78,6 @@
         path: "{{ cloned_repo_path }}/{{ prod_folder }}"
         state: directory
         mode: '0755'
-
-    - name: Check current git branch
-      ansible.builtin.command:
-        cmd: git branch --show-current
-        chdir: "{{ cloned_repo_path }}"
-      register: current_branch
-      changed_when: false
-
-    - name: Switch to template branch
-      ansible.builtin.command:
-        cmd: git checkout {{ template_branch }}
-        chdir: "{{ cloned_repo_path }}"
-      register: git_checkout_template
-      changed_when: true
-      when: current_branch.stdout != template_branch
 
     - name: Move file from plan to prod folder
       ansible.builtin.command:
