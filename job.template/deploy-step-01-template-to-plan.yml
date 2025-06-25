@@ -76,8 +76,7 @@
 
     - name: List files in grandparent directory
       ansible.builtin.command:
-        cmd: ls -laR .
-        chdir: "{{ playbook_dir }}/../../"
+        cmd: pwd
       register: ls_grandparent_dir
       changed_when: false
     - debug:
