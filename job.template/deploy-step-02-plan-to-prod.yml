@@ -111,6 +111,16 @@
       changed_when: true
       failed_when: false  # Don't fail if file doesn't exist in git
 
+    - name: Set Git user email
+      ansible.builtin.command:
+        cmd: git config user.email "automation@wzhlab.top" # 你可以替换成实际的邮箱
+        chdir: "{{ cloned_repo_path }}"
+
+    - name: Set Git user name
+      ansible.builtin.command:
+        cmd: git config user.name "Automation User" # 你可以替换成实际的用户名
+        chdir: "{{ cloned_repo_path }}"
+
     - name: Commit the move to prod
       ansible.builtin.command:
         cmd: git commit -m "Move ansible script from plan to prod folder - {{ timestamp }}"
