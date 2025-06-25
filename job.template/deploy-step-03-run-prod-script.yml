@@ -1,0 +1,176 @@
+---
+- name: Run ansible script from prod folder in main branch
+  hosts: localhost
+  connection: local
+  gather_facts: yes
+  
+  vars:
+    # These can be passed as extra vars or from previous workflow step
+    prod_file: "{{ prod_file_cached | default('') }}"
+    timestamp: "{{ timestamp_cached | default('') }}"
+    deployment_status: "{{ deployment_status_cached | default('') }}"
+    # Folder
+    prod_folder: "prod"
+    # Execution options
+    ansible_playbook_extra_vars: "{{ extra_vars | default('') }}"
+    ansible_inventory: "{{ inventory_file | default('localhost,') }}"
+    
+  tasks:
+    - name: Validate required variables
+      ansible.builtin.fail:
+        msg: "Required variable {{ item }} is not defined or empty"
+      when: vars[item] is not defined or vars[item] == ''
+      loop:
+        - prod_file
+        - timestamp
+
+    - name: Display execution parameters
+      debug:
+        msg: |
+          Production file: {{ prod_file }}
+          Timestamp: {{ timestamp }}
+          Deployment status: {{ deployment_status }}
+          Extra vars: {{ ansible_playbook_extra_vars }}
+          Inventory: {{ ansible_inventory }}
+
+    - name: Check current git branch
+      ansible.builtin.command:
+        cmd: git branch --show-current
+      register: current_branch
+      changed_when: false
+
+    - name: Ensure we're on main branch
+      ansible.builtin.command:
+        cmd: git checkout main
+      register: git_checkout_main
+      changed_when: true
+      when: current_branch.stdout != 'main'
+
+    - name: Pull latest changes from main
+      ansible.builtin.command:
+        cmd: git pull origin main
+      register: git_pull_main
+      changed_when: true
+
+    - name: Verify prod file exists
+      ansible.builtin.stat:
+        path: "{{ prod_file }}"
+      register: prod_file_stat
+
+    - name: Fail if prod file doesn't exist
+      ansible.builtin.fail:
+        msg: "Production file {{ prod_file }} does not exist in main branch"
+      when: not prod_file_stat.stat.exists
+
+    - name: Display prod file content for verification
+      debug:
+        msg: "Production file {{ prod_file }} exists and is ready for execution"
+
+    - name: Check if prod file is a valid YAML
+      ansible.builtin.command:
+        cmd: ansible-playbook --syntax-check {{ prod_file }}
+      register: syntax_check
+      changed_when: false
+      failed_when: syntax_check.rc != 0
+
+    - name: Display syntax check result
+      debug:
+        msg: "Syntax check passed for {{ prod_file }}"
+      when: syntax_check.rc == 0
+
+    - name: Create execution log directory
+      ansible.builtin.file:
+        path: "logs"
+        state: directory
+        mode: '0755'
+
+    - name: Generate execution log filename
+      ansible.builtin.set_fact:
+        log_file: "logs/execution-{{ timestamp }}.log"
+
+    - name: Execute ansible playbook from prod folder
+      ansible.builtin.command:
+        cmd: >
+          ansible-playbook {{ prod_file }}
+          {% if ansible_inventory != 'localhost,' %}-i {{ ansible_inventory }}{% endif %}
+          {% if ansible_playbook_extra_vars != '' %}--extra-vars "{{ ansible_playbook_extra_vars }}"{% endif %}
+          -v
+      register: playbook_execution
+      changed_when: true
+      failed_when: playbook_execution.rc != 0
+
+    - name: Save execution output to log file
+      ansible.builtin.copy:
+        content: |
+          Execution Timestamp: {{ ansible_date_time.iso8601 }}
+          Production File: {{ prod_file }}
+          Command: ansible-playbook {{ prod_file }}{% if ansible_inventory != 'localhost,' %} -i {{ ansible_inventory }}{% endif %}{% if ansible_playbook_extra_vars != '' %} --extra-vars "{{ ansible_playbook_extra_vars }}"{% endif %} -v
+          Exit Code: {{ playbook_execution.rc }}
+          
+          STDOUT:
+          {{ playbook_execution.stdout }}
+          
+          STDERR:
+          {{ playbook_execution.stderr }}
+        dest: "{{ log_file }}"
+        mode: '0644'
+
+    - name: Display execution results
+      debug:
+        msg: |
+          Ansible playbook execution completed successfully!
+          File executed: {{ prod_file }}
+          Exit code: {{ playbook_execution.rc }}
+          Log saved to: {{ log_file }}
+
+    - name: Commit execution log to git
+      block:
+        - name: Add log file to git
+          ansible.builtin.command:
+            cmd: git add {{ log_file }}
+          register: git_add_log
+          changed_when: true
+
+        - name: Commit execution log
+          ansible.builtin.command:
+            cmd: git commit -m "Add execution log for {{ prod_file }} - {{ timestamp }}"
+          register: git_commit_log
+          changed_when: true
+
+        - name: Push log to remote
+          ansible.builtin.command:
+            cmd: git push origin main
+          register: git_push_log
+          changed_when: true
+
+        - name: Display git commit result
+          debug:
+            msg: "Execution log committed and pushed to repository"
+      rescue:
+        - name: Display git error (non-fatal)
+          debug:
+            msg: "Warning: Could not commit execution log to git, but playbook execution was successful"
+
+    - name: Set final execution stats
+      ansible.builtin.set_stats:
+        data:
+          execution_completed: true
+          execution_timestamp: "{{ ansible_date_time.iso8601 }}"
+          prod_file_executed: "{{ prod_file }}"
+          execution_log: "{{ log_file }}"
+          exit_code: "{{ playbook_execution.rc }}"
+
+    - name: Display final success message
+      debug:
+        msg: |
+          ========================================
+          DEPLOYMENT PIPELINE COMPLETED SUCCESSFULLY
+          ========================================
+          Step 1: Template copied to plan folder ✓
+          Step 2: Script moved to prod and merged to main ✓  
+          Step 3: Production script executed successfully ✓
+          
+          Production file: {{ prod_file }}
+          Execution log: {{ log_file }}
+          Timestamp: {{ timestamp }}
+          ========================================

@@ -1,0 +1,150 @@
+---
+- name: Move ansible script from plan to prod and merge to main
+  hosts: localhost
+  connection: local
+  gather_facts: yes
+  
+  vars:
+    # These can be passed as extra vars or from previous workflow step
+    template_branch: "{{ template_branch_cached | default('') }}"
+    plan_file: "{{ plan_file_cached | default('') }}"
+    timestamp: "{{ timestamp_cached | default('') }}"
+    # Folders
+    plan_folder: "plan"
+    prod_folder: "prod"
+    
+  tasks:
+    - name: Validate required variables
+      ansible.builtin.fail:
+        msg: "Required variable {{ item }} is not defined or empty"
+      when: vars[item] is not defined or vars[item] == ''
+      loop:
+        - template_branch
+        - plan_file
+        - timestamp
+
+    - name: Display variables being used
+      debug:
+        msg: |
+          Template branch: {{ template_branch }}
+          Plan file: {{ plan_file }}
+          Timestamp: {{ timestamp }}
+
+    - name: Check if plan file exists
+      ansible.builtin.stat:
+        path: "{{ plan_file }}"
+      register: plan_file_stat
+
+    - name: Fail if plan file doesn't exist
+      ansible.builtin.fail:
+        msg: "Plan file {{ plan_file }} does not exist"
+      when: not plan_file_stat.stat.exists
+
+    - name: Create prod directory if it doesn't exist
+      ansible.builtin.file:
+        path: "{{ prod_folder }}"
+        state: directory
+        mode: '0755'
+
+    - name: Check current git branch
+      ansible.builtin.command:
+        cmd: git branch --show-current
+      register: current_branch
+      changed_when: false
+
+    - name: Switch to template branch
+      ansible.builtin.command:
+        cmd: git checkout {{ template_branch }}
+      register: git_checkout_template
+      changed_when: true
+      when: current_branch.stdout != template_branch
+
+    - name: Move file from plan to prod folder
+      ansible.builtin.command:
+        cmd: mv {{ plan_file }} {{ prod_folder }}/{{ timestamp }}.yml
+      register: move_result
+      changed_when: true
+
+    - name: Verify file was moved
+      ansible.builtin.stat:
+        path: "{{ prod_folder }}/{{ timestamp }}.yml"
+      register: prod_file_stat
+
+    - name: Fail if file wasn't moved successfully
+      ansible.builtin.fail:
+        msg: "File was not moved successfully to {{ prod_folder }}/{{ timestamp }}.yml"
+      when: not prod_file_stat.stat.exists
+
+    - name: Add moved file to git
+      ansible.builtin.command:
+        cmd: git add {{ prod_folder }}/{{ timestamp }}.yml
+      register: git_add_prod
+      changed_when: true
+
+    - name: Remove old plan file from git if it still exists
+      ansible.builtin.command:
+        cmd: git rm {{ plan_file }}
+      register: git_rm_plan
+      changed_when: true
+      failed_when: false  # Don't fail if file doesn't exist in git
+
+    - name: Commit the move to prod
+      ansible.builtin.command:
+        cmd: git commit -m "Move ansible script from plan to prod folder - {{ timestamp }}"
+      register: git_commit_move
+      changed_when: true
+
+    - name: Switch to main branch
+      ansible.builtin.command:
+        cmd: git checkout main
+      register: git_checkout_main
+      changed_when: true
+
+    - name: Pull latest changes from main
+      ansible.builtin.command:
+        cmd: git pull origin main
+      register: git_pull_main
+      changed_when: true
+
+    - name: Merge template branch into main
+      ansible.builtin.command:
+        cmd: git merge {{ template_branch }} --no-ff -m "Merge template branch {{ template_branch }} - deploy ansible script to prod"
+      register: git_merge
+      changed_when: true
+
+    - name: Push merged changes to main
+      ansible.builtin.command:
+        cmd: git push origin main
+      register: git_push_main
+      changed_when: true
+
+    - name: Clean up - delete template branch locally
+      ansible.builtin.command:
+        cmd: git branch -d {{ template_branch }}
+      register: git_delete_local_branch
+      changed_when: true
+      failed_when: false  # Don't fail if branch doesn't exist
+
+    - name: Clean up - delete template branch on remote
+      ansible.builtin.command:
+        cmd: git push origin --delete {{ template_branch }}
+      register: git_delete_remote_branch
+      changed_when: true
+      failed_when: false  # Don't fail if branch doesn't exist
+
+    - name: Display success message
+      debug:
+        msg: |
+          Successfully completed plan to prod deployment step 2:
+          - Moved file from: {{ plan_file }}
+          - To: {{ prod_folder }}/{{ timestamp }}.yml
+          - Merged branch {{ template_branch }} into main
+          - Pushed changes to remote main branch
+          - Cleaned up template branch
+
+    - name: Set facts for next workflow step
+      ansible.builtin.set_stats:
+        data:
+          prod_file: "{{ prod_folder }}/{{ timestamp }}.yml"
+          timestamp: "{{ timestamp }}"
+          deployment_status: "ready_for_execution"

@@ -1,0 +1,109 @@
+---
+- name: Copy template to plan folder with timestamp and push to new branch
+  hosts: localhost
+  connection: local
+  gather_facts: yes
+  
+  vars:
+    # Template file to copy (can be passed as extra var)
+    template_file: "{{ template_to_copy | default('change-request-create.yml') }}"
+    # Generate timestamp in YYYY-MM-DD_HH-MM-SS format
+    timestamp: "{{ ansible_date_time.year }}-{{ ansible_date_time.month.zfill(2) }}-{{ ansible_date_time.day.zfill(2) }}_{{ ansible_date_time.hour.zfill(2) }}-{{ ansible_date_time.minute.zfill(2) }}-{{ ansible_date_time.second.zfill(2) }}"
+    # Branch name for the template
+    template_branch: "template-{{ timestamp }}"
+    # Source and destination paths
+    source_path: "job.template/{{ template_file }}"
+    plan_folder: "plan"
+    dest_filename: "{{ timestamp }}.yml"
+    
+  tasks:
+    - name: Gather current date and time facts
+      ansible.builtin.setup:
+        gather_subset:
+          - date_time
+      delegate_to: localhost
+      run_once: true
+
+    - name: Display timestamp being used
+      debug:
+        msg: "Using timestamp: {{ timestamp }}"
+
+    - name: Check if template file exists
+      ansible.builtin.stat:
+        path: "{{ source_path }}"
+      register: template_stat
+
+    - name: Fail if template file doesn't exist
+      ansible.builtin.fail:
+        msg: "Template file {{ source_path }} does not exist"
+      when: not template_stat.stat.exists
+
+    - name: Create plan directory if it doesn't exist
+      ansible.builtin.file:
+        path: "{{ plan_folder }}"
+        state: directory
+        mode: '0755'
+
+    - name: Copy template file to plan folder with timestamp
+      ansible.builtin.copy:
+        src: "{{ source_path }}"
+        dest: "{{ plan_folder }}/{{ dest_filename }}"
+        mode: '0644'
+      register: copy_result
+
+    - name: Display copied file location
+      debug:
+        msg: "Template copied to: {{ plan_folder }}/{{ dest_filename }}"
+
+    - name: Check current git status
+      ansible.builtin.command:
+        cmd: git status --porcelain
+      register: git_status
+      changed_when: false
+
+    - name: Create new template branch
+      ansible.builtin.command:
+        cmd: git checkout -b {{ template_branch }}
+      register: branch_create
+      changed_when: true
+
+    - name: Add copied file to git
+      ansible.builtin.command:
+        cmd: git add {{ plan_folder }}/{{ dest_filename }}
+      register: git_add
+      changed_when: true
+
+    - name: Commit the template file
+      ansible.builtin.command:
+        cmd: git commit -m "Add template {{ template_file }} to plan folder with timestamp {{ timestamp }}"
+      register: git_commit
+      changed_when: true
+
+    - name: Push new template branch to remote
+      ansible.builtin.command:
+        cmd: git push origin {{ template_branch }}
+      register: git_push
+      changed_when: true
+
+    - name: Return to main branch
+      ansible.builtin.command:
+        cmd: git checkout main
+      register: git_checkout_main
+      changed_when: true
+
+    - name: Display success message
+      debug:
+        msg: |
+          Successfully completed template deployment step 1:
+          - Template file: {{ template_file }}
+          - Copied to: {{ plan_folder }}/{{ dest_filename }}
+          - Branch created: {{ template_branch }}
+          - Branch pushed to remote
+          - Returned to main branch
+
+    - name: Set facts for next workflow step
+      ansible.builtin.set_stats:
+        data:
+          template_branch: "{{ template_branch }}"
+          plan_file: "{{ plan_folder }}/{{ dest_filename }}"
+          timestamp: "{{ timestamp }}"
