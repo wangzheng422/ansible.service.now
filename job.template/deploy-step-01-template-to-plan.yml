@@ -56,6 +56,33 @@
       debug:
         msg: "Template copied to: {{ plan_folder }}/{{ dest_filename }}"
 
+    - name: List files in current directory
+      ansible.builtin.command:
+        cmd: ls -laR .
+        chdir: "{{ playbook_dir }}"
+      register: ls_current_dir
+      changed_when: false
+    - debug:
+        msg: "{{ ls_current_dir.stdout_lines }}"
+
+    - name: List files in parent directory
+      ansible.builtin.command:
+        cmd: ls -laR .
+        chdir: "{{ playbook_dir }}/../"
+      register: ls_parent_dir
+      changed_when: false
+    - debug:
+        msg: "{{ ls_parent_dir.stdout_lines }}"
+
+    - name: List files in grandparent directory
+      ansible.builtin.command:
+        cmd: ls -laR .
+        chdir: "{{ playbook_dir }}/../../"
+      register: ls_grandparent_dir
+      changed_when: false
+    - debug:
+        msg: "{{ ls_grandparent_dir.stdout_lines }}"
+
     - name: Check current git status
       ansible.builtin.command:
         cmd: git status --porcelain
