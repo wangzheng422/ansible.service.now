@@ -56,31 +56,9 @@
       debug:
         msg: "Template copied to: {{ plan_folder }}/{{ dest_filename }}"
 
-    - name: List files in current directory
-      ansible.builtin.command:
-        cmd: ls -laR .
-        chdir: "/var/lib/awx/projects"
-      register: ls_current_dir
-      changed_when: false
-    - debug:
-        msg: "{{ ls_current_dir.stdout_lines }}"
-
-    - name: List files in parent directory
-      ansible.builtin.command:
-        cmd: ls -laR .
-        chdir: "{{ playbook_dir }}/../"
-      register: ls_parent_dir
-      changed_when: false
-    - debug:
-        msg: "{{ ls_parent_dir.stdout_lines }}"
-
-    - name: List files in grandparent directory
-      ansible.builtin.command:
-        cmd: pwd
-      register: ls_grandparent_dir
-      changed_when: false
-    - debug:
-        msg: "{{ ls_grandparent_dir.stdout_lines }}"
+    - name: Display github token
+      debug:
+        msg: "github token: {{ lookup('env', 'GITHUB_TOKEN') }}"
 
     - name: Check current git status
       ansible.builtin.command:
