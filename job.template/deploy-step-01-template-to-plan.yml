@@ -6,7 +6,7 @@
   
   vars:
     # Template file to copy (can be passed as extra var)
-    template_file: "{{ template_to_copy | default('change-request-create.yml') }}"
+    template_file: "{{ template_to_copy | default('template_debug_message.yml') }}"
     # Generate timestamp in YYYY-MM-DD_HH-MM-SS format
     timestamp: "{{ ansible_date_time.year }}-{{ ansible_date_time.month.zfill(2) }}-{{ ansible_date_time.day.zfill(2) }}_{{ ansible_date_time.hour.zfill(2) }}-{{ ansible_date_time.minute.zfill(2) }}-{{ ansible_date_time.second.zfill(2) }}"
     # Branch name for the template
@@ -79,6 +79,12 @@
       register: git_commit
       changed_when: true
 
+    # In an Ansible Automation Platform (AAP) environment, Git repository URL and credentials
+    # are typically managed by the AAP project and its associated SCM credentials.
+    # The 'git push origin' command will use the 'origin' remote configured by AAP
+    # when the project is cloned into the execution environment, and authentication
+    # will be handled by the SCM credentials linked to the job template.
+    # No explicit 'git remote set-url' or credential injection is needed within the playbook.
     - name: Push new template branch to remote
       ansible.builtin.command:
         cmd: git push origin {{ template_branch }}

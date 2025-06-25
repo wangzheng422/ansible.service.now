@@ -1,0 +1,14 @@
+---
+- name: Output debug message with parameter for genAI testing
+  hosts: localhost
+  connection: local
+  vars:
+    playbook_to_run: "{{ awx_webhook_payload.gitlab_payload.playbook_to_run | default('GenAI dummy message') }}"
+  tasks:
+    - name: Print "GenAI dummy step 1 ok"
+      debug:
+        msg: "GenAI demmy step 1 ok"
+
+    - name: Output playbook_to_run parameter
+      debug:
+        msg: "The playbook_to_run parameter is: {{ playbook_to_run }}"
