@@ -9,6 +9,7 @@
     prod_file: "{{ prod_file_cached | default('') }}"
     timestamp: "{{ timestamp_cached | default('') }}"
     deployment_status: "{{ deployment_status_cached | default('') }}"
+    cloned_repo_path: "{{ cloned_repo_path_cached | default('') }}"
     # Folder
     prod_folder: "prod"
     # Execution options
@@ -36,12 +37,14 @@
     - name: Check current git branch
       ansible.builtin.command:
         cmd: git branch --show-current
+        chdir: "{{ cloned_repo_path }}"
       register: current_branch
       changed_when: false
 
     - name: Ensure we're on main branch
       ansible.builtin.command:
         cmd: git checkout main
+        chdir: "{{ cloned_repo_path }}"
       register: git_checkout_main
       changed_when: true
       when: current_branch.stdout != 'main'
@@ -49,6 +52,7 @@
     - name: Pull latest changes from main
       ansible.builtin.command:
         cmd: git pull origin main
+        chdir: "{{ cloned_repo_path }}"
       register: git_pull_main
       changed_when: true
 
@@ -80,31 +84,32 @@
 
     - name: Create execution log directory
       ansible.builtin.file:
-        path: "logs"
+        path: "{{ cloned_repo_path }}/logs"
         state: directory
         mode: '0755'
 
     - name: Generate execution log filename
       ansible.builtin.set_fact:
-        log_file: "logs/execution-{{ timestamp }}.log"
+        log_file: "{{ cloned_repo_path }}/logs/execution-{{ timestamp }}.log"
 
     - name: Execute ansible playbook from prod folder
       ansible.builtin.command:
         cmd: >
-          ansible-playbook {{ prod_file }}
+          ansible-playbook {{ prod_file | replace(cloned_repo_path ~ '/', '') }}
           {% if ansible_inventory != 'localhost,' %}-i {{ ansible_inventory }}{% endif %}
           {% if ansible_playbook_extra_vars != '' %}--extra-vars "{{ ansible_playbook_extra_vars }}"{% endif %}
           -v
-      register: playbook_execution
-      changed_when: true
-      failed_when: playbook_execution.rc != 0
+        chdir: "{{ cloned_repo_path }}"
+        register: playbook_execution
+        changed_when: true
+        failed_when: playbook_execution.rc != 0
 
     - name: Save execution output to log file
       ansible.builtin.copy:
         content: |
           Execution Timestamp: {{ ansible_date_time.iso8601 }}
           Production File: {{ prod_file }}
-          Command: ansible-playbook {{ prod_file }}{% if ansible_inventory != 'localhost,' %} -i {{ ansible_inventory }}{% endif %}{% if ansible_playbook_extra_vars != '' %} --extra-vars "{{ ansible_playbook_extra_vars }}"{% endif %} -v
+          Command: ansible-playbook {{ prod_file | replace(cloned_repo_path ~ '/', '') }}{% if ansible_inventory != 'localhost,' %} -i {{ ansible_inventory }}{% endif %}{% if ansible_playbook_extra_vars != '' %} --extra-vars "{{ ansible_playbook_extra_vars }}"{% endif %} -v
           Exit Code: {{ playbook_execution.rc }}
           
           STDOUT:
@@ -128,18 +133,21 @@
         - name: Add log file to git
           ansible.builtin.command:
             cmd: git add {{ log_file }}
+            chdir: "{{ cloned_repo_path }}"
           register: git_add_log
           changed_when: true
 
         - name: Commit execution log
           ansible.builtin.command:
             cmd: git commit -m "Add execution log for {{ prod_file }} - {{ timestamp }}"
+            chdir: "{{ cloned_repo_path }}"
           register: git_commit_log
           changed_when: true
 
         - name: Push log to remote
           ansible.builtin.command:
             cmd: git push origin main
+            chdir: "{{ cloned_repo_path }}"
           register: git_push_log
           changed_when: true
 

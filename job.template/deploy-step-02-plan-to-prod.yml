@@ -188,3 +188,4 @@
           prod_file: "{{ cloned_repo_path }}/{{ prod_folder }}/{{ timestamp }}.yml"
           timestamp: "{{ timestamp }}"
           deployment_status: "ready_for_execution"
+          cloned_repo_path: "{{ cloned_repo_path }}"
