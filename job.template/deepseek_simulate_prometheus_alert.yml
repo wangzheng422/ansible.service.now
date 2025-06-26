@@ -111,3 +111,7 @@
     - name: Display path to generated playbook
       ansible.builtin.debug:
         msg: "Generated Ansible playbook saved to: {{ save_playbook_result.dest }}"
+
+    - name: Display generated playbook content
+      ansible.builtin.debug:
+        var: generated_playbook_content
