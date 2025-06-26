@@ -2,7 +2,7 @@
 - name: Simulate Prometheus Alert and Generate Fix Playbook with DeepSeek AI
   hosts: localhost
   connection: local
-  gather_facts: no
+  gather_facts: yes
 
   vars:
     prometheus_alert_payload: |
