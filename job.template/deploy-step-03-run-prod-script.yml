@@ -34,6 +34,20 @@
           Extra vars: {{ ansible_playbook_extra_vars }}
           Inventory: {{ ansible_inventory }}
 
+    - name: Clone the new Git repository
+      ansible.builtin.command:
+        cmd: "git clone https://oauth2:{{ lookup('env', 'GITHUB_TOKEN') }}@{{ github_repo_auto_url | regex_replace('^https?://', '') }} {{ cloned_repo_dir_name }}"
+        chdir: "{{ playbook_dir }}/" # Clone into the parent directory
+      args:
+        creates: "{{ cloned_repo_path }}" # Only run if the directory doesn't exist
+      register: git_clone_result
+      changed_when: git_clone_result.rc == 0
+
+    - name: Display clone result
+      debug:
+        msg: "Clone result: {{ git_clone_result }}"
+      when: git_clone_result is defined and git_clone_result.rc == 0
+
     - name: Check current git branch
       ansible.builtin.command:
         cmd: git branch --show-current
