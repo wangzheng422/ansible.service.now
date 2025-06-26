@@ -116,9 +116,9 @@
           {% if ansible_playbook_extra_vars != '' %}--extra-vars "{{ ansible_playbook_extra_vars }}"{% endif %}
           -v
         chdir: "{{ cloned_repo_path }}"
-        register: playbook_execution
-        changed_when: true
-        failed_when: playbook_execution.rc != 0
+      register: playbook_execution
+      changed_when: true
+      failed_when: playbook_execution.rc != 0
 
     - name: Save execution output to log file
       ansible.builtin.copy:
