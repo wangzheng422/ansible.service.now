@@ -1,0 +1,113 @@
+---
+- name: Simulate Prometheus Alert and Generate Fix Playbook with DeepSeek AI
+  hosts: localhost
+  connection: local
+  gather_facts: no
+
+  vars:
+    prometheus_alert_payload: |
+      {
+        "version": "4",
+        "groupKey": "{}:{alertname=\"HostHighCpuUsage\"}",
+        "truncatedAlerts": 0,
+        "status": "firing",
+        "receiver": "webhook",
+        "groupLabels": {
+          "alertname": "HostHighCpuUsage"
+        },
+        "commonLabels": {
+          "alertname": "HostHighCpuUsage",
+          "instance": "localhost:9100",
+          "job": "node_exporter",
+          "severity": "critical"
+        },
+        "commonAnnotations": {
+          "summary": "Host localhost:9100 CPU usage is high"
+        },
+        "externalURL": "http://localhost:9090",
+        "alerts": [
+          {
+            "status": "firing",
+            "labels": {
+              "alertname": "HostHighCpuUsage",
+              "instance": "localhost:9100",
+              "job": "node_exporter",
+              "severity": "critical"
+            },
+            "annotations": {
+              "summary": "Host localhost:9100 CPU usage is high",
+              "description": "This is a simulated alert for high CPU usage on localhost:9100."
+            },
+            "startsAt": "2025-06-20T07:00:00.000Z",
+            "endsAt": "0001-01-01T00:00:00.000Z",
+            "generatorURL": "http://localhost:9090/graph?g0.expr=node_cpu_usage_total%7Bmode%3D%22idle%22%7D+%3C+10&g0.tab=1",
+            "fingerprint": "abcdef1234567890"
+          }
+        ]
+      }
+    
+    # DeepSeek AI API configuration
+    deepseek_api_key: "{{ lookup('env', 'GENAI_TOKEN') }}" # Ensure DEEPSEEK_API_KEY is set as an environment variable
+    deepseek_api_url: "{{ lookup('env', 'GENAI_API_URL') }}"
+    deepseek_model: "{{ lookup('env', 'GENAI_MODEL_NAME') }}" # Or another suitable model like "deepseek-chat"
+
+  tasks:
+    - name: Parse Prometheus alert payload
+      ansible.builtin.set_fact:
+        parsed_alert: "{{ prometheus_alert_payload | from_json }}"
+
+    - name: Extract alert summary and description
+      ansible.builtin.set_fact:
+        alert_summary: "{{ parsed_alert.commonAnnotations.summary | default('N/A') }}"
+        alert_description: "{{ parsed_alert.alerts[0].annotations.description | default('N/A') }}"
+        alert_instance: "{{ parsed_alert.commonLabels.instance | default('N/A') }}"
+
+    - name: Construct prompt for DeepSeek AI
+      ansible.builtin.set_fact:
+        deepseek_prompt: |
+          You are an expert in Ansible. Based on the following Prometheus alert, generate an Ansible playbook to fix the described problem.
+          The playbook should be self-contained and executable.
+          
+          Prometheus Alert Summary: {{ alert_summary }}
+          Prometheus Alert Description: {{ alert_description }}
+          Affected Instance: {{ alert_instance }}
+          
+          Please provide only the YAML content of the Ansible playbook, without any additional text or markdown formatting outside the YAML.
+
+    - name: Call DeepSeek AI for playbook generation
+      ansible.builtin.uri:
+        url: "{{ deepseek_api_url }}"
+        method: POST
+        headers:
+          Content-Type: "application/json"
+          Authorization: "Bearer {{ deepseek_api_key }}"
+        body_format: json
+        body:
+          model: "{{ deepseek_model }}"
+          messages:
+            - role: user
+              content: "{{ deepseek_prompt }}"
+        status_code: 200
+        return_content: yes
+      register: deepseek_response
+
+    - name: Extract generated playbook content
+      ansible.builtin.set_fact:
+        generated_playbook_content: "{{ deepseek_response.json.choices[0].message.content }}"
+
+    - name: Create directory for generated playbooks
+      ansible.builtin.file:
+        path: "generated_playbooks"
+        state: directory
+        mode: '0755'
+
+    - name: Save generated playbook to file
+      ansible.builtin.copy:
+        content: "{{ generated_playbook_content }}"
+        dest: "generated_playbooks/fix_playbook_{{ ansible_date_time.iso8601 | replace(':', '-') | replace('.', '-') }}.yml"
+        mode: '0644'
+      register: save_playbook_result
+
+    - name: Display path to generated playbook
+      ansible.builtin.debug:
+        msg: "Generated Ansible playbook saved to: {{ save_playbook_result.dest }}"
