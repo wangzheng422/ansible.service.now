@@ -14,6 +14,7 @@
     prod_folder: "prod"
     # Execution options
     github_repo_auto_url: "{{ GITHUB_REPO_AUTO }}"
+    cloned_repo_dir_name: "tmp_github_repo_auto"
     ansible_playbook_extra_vars: "{{ extra_vars | default('') }}"
     ansible_inventory: "{{ inventory_file | default('localhost,') }}"
     
