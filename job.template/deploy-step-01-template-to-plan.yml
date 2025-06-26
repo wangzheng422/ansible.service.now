@@ -58,10 +58,10 @@
       changed_when: git_clone_result.rc == 0
       # when: not cloned_repo_path | ansible.builtin.stat(get_md5=False).stat.exists
 
-    - name: Display clone result
-      debug:
-        msg: "Clone result: {{ git_clone_result }}"
-      when: git_clone_result is defined and git_clone_result.rc == 0
+    # - name: Display clone result
+    #   debug:
+    #     msg: "Clone result: {{ git_clone_result }}"
+    #   when: git_clone_result is defined and git_clone_result.rc == 0
 
     - name: Create plan directory inside cloned repo if it doesn't exist
       ansible.builtin.file:

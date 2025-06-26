@@ -45,10 +45,10 @@
       register: git_clone_result
       changed_when: git_clone_result.rc == 0
 
-    - name: Display clone result
-      debug:
-        msg: "Clone result: {{ git_clone_result }}"
-      when: git_clone_result is defined and git_clone_result.rc == 0
+    # - name: Display clone result
+    #   debug:
+    #     msg: "Clone result: {{ git_clone_result }}"
+    #   when: git_clone_result is defined and git_clone_result.rc == 0
 
     - name: Check current git branch
       ansible.builtin.command:
