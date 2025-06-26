@@ -144,6 +144,16 @@
           Exit code: {{ playbook_execution.rc }}
           Log saved to: {{ log_file }}
 
+    - name: Set Git user email
+      ansible.builtin.command:
+        cmd: git config user.email "automation@wzhlab.top" # 你可以替换成实际的邮箱
+        chdir: "{{ cloned_repo_path }}"
+
+    - name: Set Git user name
+      ansible.builtin.command:
+        cmd: git config user.name "Automation User" # 你可以替换成实际的用户名
+        chdir: "{{ cloned_repo_path }}"
+
     - name: Commit execution log to git
       block:
         - name: Add log file to git
