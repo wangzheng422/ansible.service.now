@@ -48,7 +48,7 @@
           username: "{{ snow_username }}"
           password: "{{ snow_password }}"
         sys_class_name: "{{ cmdb_ci_class_name }}" # Use the variable for class name
-        query: "active=true" # Example query: get active CIs
+        query: "active=1" # Example query: get active CIs (using 1 for true)
         return_fields: # Specify fields to retrieve (these might vary by class)
           - name
           - ip_address
