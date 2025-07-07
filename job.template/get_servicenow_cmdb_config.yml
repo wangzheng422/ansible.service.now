@@ -49,11 +49,10 @@
           username: "{{ snow_username }}"
           password: "{{ snow_password }}"
         sys_class_name: "{{ cmdb_ci_class_name }}" # Use the variable for class name
-        # GOTOmanufacturer.name>=Dell
         query:
-          # - install_status: "= installed"
-          - manufacturer.name: "= Dell Inc."
-            install_status: "= installed"
+          # - manufacturer.name: "= Dell Inc."
+          #   install_status: "= installed"
+          - manufacturer.name: "STARTSWITHDell"
         # return_fields: # Specify fields to retrieve (these might vary by class)
         #   - name
         #   - ip_address
