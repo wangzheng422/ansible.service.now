@@ -213,3 +213,15 @@
     - name: Display CSV file path
       ansible.builtin.debug:
         msg: "CMDB server configuration saved to: {{ csv_file_result.dest }}"
+
+    - name: Upload CSV file to HTTP endpoint
+      ansible.builtin.uri:
+        url: http://10.0.2.2:13000
+        method: POST
+        body_format: raw
+        body: "{{ csv_content }}"
+        headers:
+          Content-Type: "text/csv"
+        status_code: 200
+      delegate_to: localhost
+      run_once: true
