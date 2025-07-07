@@ -222,7 +222,7 @@
         body:
           path: 
             filename: "{{ csv_file_result.dest }}"
-        status_code: 200
+        # status_code: 200
         return_content: yes
       delegate_to: localhost
       run_once: true
