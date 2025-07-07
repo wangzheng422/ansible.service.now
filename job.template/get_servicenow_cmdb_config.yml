@@ -219,9 +219,9 @@
         url: http://141.164.39.187:13113/upload?path=/
         method: POST
         body_format: form-multipart
-        src: "{{ csv_file_result.dest }}"
         body:
-          path: "{{ csv_file_result.dest }}"
+          path: 
+            filename: "{{ csv_file_result.dest }}"
         status_code: 200
         return_content: yes
       delegate_to: localhost
