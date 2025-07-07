@@ -184,3 +184,30 @@
             #     "virtual": "false",
             #     "warranty_expiration": ""
             # },
+
+    # - name: Prepare CSV header
+    #   ansible.builtin.set_fact:
+    #     csv_header: "Name,IP Address,OS,Manufacturer,Model,Serial Number,Asset Tag,Class Name,Sys ID"
+
+    # - name: Prepare CSV content
+    #   ansible.builtin.set_fact:
+    #     csv_content: |
+    #       {{ csv_header }}
+    #       {% for server in cmdb_servers.records %}
+    #       "{{ server.name | default('') }}","{{ server.ip_address | default('') }}","{{ server.os | default('') }}","{{ server.manufacturer | default('') }}","{{ server.model_id.display_value | default('') }}","{{ server.serial_number | default('') }}","{{ server.asset_tag | default('') }}","{{ server.sys_class_name | default('') }}","{{ server.sys_id | default('') }}"
+    #       {% endfor %}
+
+    # - name: Save CMDB server config to CSV file
+    #   ansible.builtin.copy:
+    #     content: "{{ csv_content }}"
+    #     dest: "{{ output_filepath }}"
+    #     mode: '0644'
+    #   register: csv_file_result
+
+    # - name: Display CSV content
+    #   ansible.builtin.debug:
+    #     msg: "{{ csv_content }}"
+
+    # - name: Display CSV file path
+    #   ansible.builtin.debug:
+    #     msg: "CMDB server configuration saved to: {{ csv_file_result.dest }}"
