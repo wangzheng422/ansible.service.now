@@ -1,0 +1,105 @@
+---
+- name: Get ServiceNow CMDB Server Config and Export to CSV
+  hosts: localhost
+  connection: local
+  collections:
+    - servicenow.itsm
+    - community.general
+
+  vars:
+    # ServiceNow connection details (expected to be passed as extra vars or from environment)
+    snow_instance: "{{ lookup('env', 'SNOW_INSTANCE') | default('your_servicenow_instance.service-now.com') }}"
+    snow_username: "{{ lookup('env', 'SNOW_USERNAME') | default('your_username') }}"
+    snow_password: "{{ lookup('env', 'SNOW_PASSWORD') | default('your_password') }}"
+    
+    # Output file path
+    output_dir: "cmdb_exports"
+    output_filename: "servicenow_cmdb_servers_{{ ansible_date_time.iso8601 | replace(':', '-') | replace('.', '-') }}.csv"
+    output_filepath: "{{ output_dir }}/{{ output_filename }}"
+    
+    # Specify the CMDB class name to query.
+    # Examples:
+    # - cmdb_ci_server (for general servers)
+    # - cmdb_ci_database (for databases)
+    # - cmdb_ci_app_server (for application servers like Java app servers)
+    # - cmdb_ci_web_server (for web servers)
+    # You can find available class names in your ServiceNow instance under "Configuration > CI Class Manager"
+    # or by inspecting the 'sys_db_object' table (filter for tables starting with 'cmdb_ci_').
+    cmdb_ci_class_name: "cmdb_ci_server" # Default to servers, change as needed
+
+  tasks:
+    - name: Gather current date and time facts
+      ansible.builtin.setup:
+        gather_subset:
+          - date_time
+      delegate_to: localhost
+      run_once: true
+
+    - name: Create output directory if it doesn't exist
+      ansible.builtin.file:
+        path: "{{ output_dir }}"
+        state: directory
+        mode: '0755'
+
+    - name: Get CMDB information
+      servicenow.itsm.configuration_item_info:
+        instance:
+          host: "{{ snow_instance }}"
+          username: "{{ snow_username }}"
+          password: "{{ snow_password }}"
+        class_name: "{{ cmdb_ci_class_name }}" # Use the variable for class name
+        query: "active=true" # Example query: get active CIs
+        fields: # Specify fields to retrieve (these might vary by class)
+          - name
+          - ip_address
+          - os
+          - manufacturer
+          - model_id
+          - serial_number
+          - asset_tag
+          - sys_class_name
+          - sys_id
+      register: cmdb_servers
+
+    - name: Prepare CSV header
+      ansible.builtin.set_fact:
+        csv_header: "Name,IP Address,OS,Manufacturer,Model,Serial Number,Asset Tag,Class Name,Sys ID"
+
+    - name: Prepare CSV content
+      ansible.builtin.set_fact:
+        csv_content: |
+          {{ csv_header }}
+          {% for server in cmdb_servers.records %}
+          "{{ server.name | default('') }}","{{ server.ip_address | default('') }}","{{ server.os | default('') }}","{{ server.manufacturer | default('') }}","{{ server.model_id.display_value | default('') }}","{{ server.serial_number | default('') }}","{{ server.asset_tag | default('') }}","{{ server.sys_class_name | default('') }}","{{ server.sys_id | default('') }}"
+          {% endfor %}
+
+    - name: Save CMDB server config to CSV file
+      ansible.builtin.copy:
+        content: "{{ csv_content }}"
+        dest: "{{ output_filepath }}"
+        mode: '0644'
+      register: csv_file_result
+
+    - name: Display CSV file path
+      ansible.builtin.debug:
+        msg: "CMDB server configuration saved to: {{ csv_file_result.dest }}"
+
+    - name: Send CSV file via email (example - requires mail server configuration)
+      community.general.mail:
+        host: "smtp.example.com" # Replace with your SMTP host
+        port: 587 # Replace with your SMTP port
+        username: "your_email@example.com" # Replace with your email username
+        password: "your_email_password" # Replace with your email password or use Ansible Vault
+        to: "recipient@example.com" # Replace with recipient email
+        subject: "ServiceNow CMDB Server Configuration Export - {{ ansible_date_time.iso8601 }}"
+        body: "Attached is the ServiceNow CMDB server configuration export."
+        attach: "{{ output_filepath }}"
+        secure: starttls # Use 'ssl' for SMTPS, 'starttls' for SMTP with STARTTLS
+      delegate_to: localhost
+      when: csv_file_result.dest is defined # Only attempt to send if file was created
+      ignore_errors: true # Ignore errors for mail module as it depends on external setup
+
+    - name: Display email sending status
+      ansible.builtin.debug:
+        msg: "Attempted to send email with CMDB export. Check mail server logs for details."
+      when: csv_file_result.dest is defined
