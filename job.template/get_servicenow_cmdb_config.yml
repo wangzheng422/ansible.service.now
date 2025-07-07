@@ -53,6 +53,7 @@
         query:
           # - install_status: "= installed"
           - manufacturer.name: "= Dell Inc."
+            install_status: "= installed"
         # return_fields: # Specify fields to retrieve (these might vary by class)
         #   - name
         #   - ip_address
