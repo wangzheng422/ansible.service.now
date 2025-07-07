@@ -51,7 +51,7 @@
         sys_class_name: "{{ cmdb_ci_class_name }}" # Use the variable for class name
         # query: "manufacturer.name=Dell" # Example query: filter by manufacturer
         query:
-          - manufacturer.name: = 'Dell Inc.'
+          - install_status: = 'installed'
         # return_fields: # Specify fields to retrieve (these might vary by class)
         #   - name
         #   - ip_address
