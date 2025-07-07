@@ -216,13 +216,18 @@
 
     - name: Upload CSV file to HTTP endpoint using uri module with form-multipart
       ansible.builtin.uri:
-        url: http://141.164.39.187:13113/upload
+        url: http://141.164.39.187:13113/upload?path=/
         method: POST
         body_format: form-multipart
+        src: "{{ csv_file_result.dest }}"
         body:
-          path:
-            src: "{{ csv_file_result.dest }}"
-            filename: "{{ output_filename }}"
+          path: "{{ csv_file_result.dest }}"
         status_code: 200
+        return_content: yes
       delegate_to: localhost
       run_once: true
+      register: upload_result
+
+    - name: Display upload result
+      ansible.builtin.debug:
+        msg: "Server response: {{ upload_result.content }}"
