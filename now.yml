@@ -1,3 +1,4 @@
+# Group hosts automatically, according to values of manufacturer and os columns.
 plugin: ansible.builtin.generator
 hosts:
   name: my_test_host
