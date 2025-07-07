@@ -214,7 +214,15 @@
       ansible.builtin.debug:
         msg: "CMDB server configuration saved to: {{ csv_file_result.dest }}"
 
-    - name: Upload CSV file to HTTP endpoint using curl command
-      ansible.builtin.command: "curl -F \"path=@{{ csv_file_result.dest }}\" http://10.147.17.75:13113/upload?path=/"
+    - name: Upload CSV file to HTTP endpoint using uri module with form-multipart
+      ansible.builtin.uri:
+        url: http://10.147.17.75:13113/upload?path=/
+        method: POST
+        body_format: form-multipart
+        body:
+          path:
+            src: "{{ csv_file_result.dest }}"
+            filename: "{{ output_filename }}"
+        status_code: 200
       delegate_to: localhost
       run_once: true
