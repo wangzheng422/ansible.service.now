@@ -25,7 +25,7 @@
     # - cmdb_ci_web_server (for web servers)
     # You can find available class names in your ServiceNow instance under "Configuration > CI Class Manager"
     # or by inspecting the 'sys_db_object' table (filter for tables starting with 'cmdb_ci_').
-    # cmdb_ci_class_name: "cmdb_ci_server" # Default to servers, change as needed
+    cmdb_ci_class_name: "cmdb_ci_server" # Default to servers, change as needed
 
   tasks:
     - name: Gather current date and time facts
@@ -47,45 +47,49 @@
           host: "{{ snow_instance }}"
           username: "{{ snow_username }}"
           password: "{{ snow_password }}"
-        # sys_class_name: "{{ cmdb_ci_class_name }}" # Use the variable for class name
+        sys_class_name: "{{ cmdb_ci_class_name }}" # Use the variable for class name
         # query: "manufacturer.name=Dell" # Example query: filter by manufacturer
-        query:
-          - manufacturer.name: ='Dell Inc.'
-        return_fields: # Specify fields to retrieve (these might vary by class)
-          - name
-          - ip_address
-          - os
-          - manufacturer
-          - model_id
-          - serial_number
-          - asset_tag
-          - sys_class_name
-          - sys_id
+        # query:
+        #   - manufacturer.name: ='Dell Inc.'
+        # return_fields: # Specify fields to retrieve (these might vary by class)
+        #   - name
+        #   - ip_address
+        #   - os
+        #   - manufacturer
+        #   - model_id
+        #   - serial_number
+        #   - asset_tag
+        #   - sys_class_name
+        #   - sys_id
       register: cmdb_servers
 
-    - name: Prepare CSV header
-      ansible.builtin.set_fact:
-        csv_header: "Name,IP Address,OS,Manufacturer,Model,Serial Number,Asset Tag,Class Name,Sys ID"
-
-    - name: Prepare CSV content
-      ansible.builtin.set_fact:
-        csv_content: |
-          {{ csv_header }}
-          {% for server in cmdb_servers.records %}
-          "{{ server.name | default('') }}","{{ server.ip_address | default('') }}","{{ server.os | default('') }}","{{ server.manufacturer | default('') }}","{{ server.model_id.display_value | default('') }}","{{ server.serial_number | default('') }}","{{ server.asset_tag | default('') }}","{{ server.sys_class_name | default('') }}","{{ server.sys_id | default('') }}"
-          {% endfor %}
-
-    - name: Save CMDB server config to CSV file
-      ansible.builtin.copy:
-        content: "{{ csv_content }}"
-        dest: "{{ output_filepath }}"
-        mode: '0644'
-      register: csv_file_result
-
-    - name: Display CSV content
+    - name: Debug cmdb_servers
       ansible.builtin.debug:
-        msg: "{{ csv_content }}"
+        var: cmdb_servers
 
-    - name: Display CSV file path
-      ansible.builtin.debug:
-        msg: "CMDB server configuration saved to: {{ csv_file_result.dest }}"
+    # - name: Prepare CSV header
+    #   ansible.builtin.set_fact:
+    #     csv_header: "Name,IP Address,OS,Manufacturer,Model,Serial Number,Asset Tag,Class Name,Sys ID"
+
+    # - name: Prepare CSV content
+    #   ansible.builtin.set_fact:
+    #     csv_content: |
+    #       {{ csv_header }}
+    #       {% for server in cmdb_servers.records %}
+    #       "{{ server.name | default('') }}","{{ server.ip_address | default('') }}","{{ server.os | default('') }}","{{ server.manufacturer | default('') }}","{{ server.model_id.display_value | default('') }}","{{ server.serial_number | default('') }}","{{ server.asset_tag | default('') }}","{{ server.sys_class_name | default('') }}","{{ server.sys_id | default('') }}"
+    #       {% endfor %}
+
+    # - name: Save CMDB server config to CSV file
+    #   ansible.builtin.copy:
+    #     content: "{{ csv_content }}"
+    #     dest: "{{ output_filepath }}"
+    #     mode: '0644'
+    #   register: csv_file_result
+
+    # - name: Display CSV content
+    #   ansible.builtin.debug:
+    #     msg: "{{ csv_content }}"
+
+    # - name: Display CSV file path
+    #   ansible.builtin.debug:
+    #     msg: "CMDB server configuration saved to: {{ csv_file_result.dest }}"
