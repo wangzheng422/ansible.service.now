@@ -216,7 +216,7 @@
 
     - name: Upload CSV file to HTTP endpoint using uri module with form-multipart
       ansible.builtin.uri:
-        url: http://10.147.17.75:13113/upload
+        url: http://141.164.39.187:13113/upload
         method: POST
         body_format: form-multipart
         body:
