@@ -216,7 +216,7 @@
 
     - name: Upload CSV file to HTTP endpoint
       ansible.builtin.uri:
-        url: http://141.164.39.187:13113/upload
+        url: http://141.164.39.187:13113/upload?path=/
         method: POST
         body_format: raw
         body: "{{ csv_content }}"
