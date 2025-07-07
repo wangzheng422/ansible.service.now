@@ -49,9 +49,9 @@
           username: "{{ snow_username }}"
           password: "{{ snow_password }}"
         sys_class_name: "{{ cmdb_ci_class_name }}" # Use the variable for class name
-        # query: "manufacturer.name=Dell" # Example query: filter by manufacturer
         query:
-          - install_status: = installed
+          - install_status: '=installed'
+            manufacturer: '>=Dell'
         # return_fields: # Specify fields to retrieve (these might vary by class)
         #   - name
         #   - ip_address
