@@ -213,9 +213,9 @@
         mode: '0644'
       register: csv_file_result
 
-    # - name: Display CSV content
-    #   ansible.builtin.debug:
-    #     msg: "{{ csv_content }}"
+    - name: Display CSV content
+      ansible.builtin.debug:
+        msg: "{{ csv_content }}"
 
     - name: Display CSV file path
       ansible.builtin.debug:
