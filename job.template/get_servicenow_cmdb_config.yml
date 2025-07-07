@@ -52,7 +52,7 @@
         query:
           # - manufacturer.name: "= Dell Inc."
           #   install_status: "= installed"
-          - manufacturer.name: "STARTSWITHDell"
+          - manufacturer.name: ">=Dell"
         # return_fields: # Specify fields to retrieve (these might vary by class)
         #   - name
         #   - ip_address
