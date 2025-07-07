@@ -1,63 +1,68 @@
-plugin: servicenow.itsm.now
+plugin: ansible.builtin.generator
+hosts:
+  name: my_test_host
 
-# Group hosts automatically, according to values of manufacturer and os columns.
-# Include only records with the specified operating systems.
-# Groups will most likely overlap.
+
 # plugin: servicenow.itsm.now
-# group_by:
-#   manufacturer:
-#   os:
-#     includes:
-#       - Linux Red Hat
-#       - Windows XP
 
-# Group hosts automatically, according to values of the os column. Filtering ensures
-# that we only see selected operating systems.
+# # Group hosts automatically, according to values of manufacturer and os columns.
+# # Include only records with the specified operating systems.
+# # Groups will most likely overlap.
+# # plugin: servicenow.itsm.now
+# # group_by:
+# #   manufacturer:
+# #   os:
+# #     includes:
+# #       - Linux Red Hat
+# #       - Windows XP
 
-instance:
-  # Your ServiceNow instance URL (e.g., dev12345.service-now.com)
-  host: "{{ snow_instance }}"
-  # Your ServiceNow username
-  username: "{{ snow_username }}"
-  # Your ServiceNow password
-  password: "{{ snow_password }}"
+# # Group hosts automatically, according to values of the os column. Filtering ensures
+# # that we only see selected operating systems.
 
+# instance:
+#   # Your ServiceNow instance URL (e.g., dev12345.service-now.com)
+#   host: "{{ snow_instance }}"
+#   # Your ServiceNow username
+#   username: "{{ snow_username }}"
+#   # Your ServiceNow password
+#   password: "{{ snow_password }}"
+
+# # table: cmdb_ci_server
+# # query:
+# #   - os: = Linux Red Hat
+# #   - os: = Windows XP
+# # keyed_groups:
+# #   - key: os
+# #     prefix: os
+
+# # --- CMDB Query & Filtering ---
+# # Target the main server table.
 # table: cmdb_ci_server
-# query:
-#   - os: = Linux Red Hat
-#   - os: = Windows XP
+
+# # Specify only the fields you need to improve performance.
+# fields:
+#   - name
+#   - ip_address
+#   - os
+
+# # Filter CIs using a ServiceNow encoded query string.
+# # This query finds servers where the OS is "Linux Red Hat" OR "Windows XP".
+# # The '^OR' is ServiceNow's syntax for a logical OR in a query.
+# query: "os=Linux Red Hat^ORos=Windows XP"
+
+# # --- Host & Group Creation ---
+# # Create groups based on the OS. The 'key' uses the display value of the 'os' field.
+# # This will create groups like 'os_Linux_Red_Hat'.
 # keyed_groups:
-#   - key: os
+#   - key: os.display_value
 #     prefix: os
+#     separator: "_"
 
-# --- CMDB Query & Filtering ---
-# Target the main server table.
-table: cmdb_ci_server
+# # This block is CRITICAL. It maps ServiceNow fields to Ansible's host variables.
+# # Without this, Ansible won't know what to call the hosts or how to connect to them.
+# compose:
+#   # Set the name Ansible will use for the host (e.g., what you see in logs).
+#   inventory_hostname: name
 
-# Specify only the fields you need to improve performance.
-fields:
-  - name
-  - ip_address
-  - os
-
-# Filter CIs using a ServiceNow encoded query string.
-# This query finds servers where the OS is "Linux Red Hat" OR "Windows XP".
-# The '^OR' is ServiceNow's syntax for a logical OR in a query.
-query: "os=Linux Red Hat^ORos=Windows XP"
-
-# --- Host & Group Creation ---
-# Create groups based on the OS. The 'key' uses the display value of the 'os' field.
-# This will create groups like 'os_Linux_Red_Hat'.
-keyed_groups:
-  - key: os.display_value
-    prefix: os
-    separator: "_"
-
-# This block is CRITICAL. It maps ServiceNow fields to Ansible's host variables.
-# Without this, Ansible won't know what to call the hosts or how to connect to them.
-compose:
-  # Set the name Ansible will use for the host (e.g., what you see in logs).
-  inventory_hostname: name
-
-  # Set the IP address or FQDN Ansible will connect to.
-  ansible_host: ip_address
+#   # Set the IP address or FQDN Ansible will connect to.
+#   ansible_host: ip_address
