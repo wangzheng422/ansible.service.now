@@ -52,7 +52,7 @@
         # GOTOmanufacturer.name>=Dell
         query:
           # - install_status: "= installed"
-          - manufacturer: ">= Dell"
+          - manufacturer: "= Dell Inc."
         # return_fields: # Specify fields to retrieve (these might vary by class)
         #   - name
         #   - ip_address
