@@ -1,3 +1,5 @@
+plugin: servicenow.itsm.now
+
 # Group hosts automatically, according to values of manufacturer and os columns.
 # Include only records with the specified operating systems.
 # Groups will most likely overlap.
@@ -11,7 +13,7 @@
 
 # Group hosts automatically, according to values of the os column. Filtering ensures
 # that we only see selected operating systems.
-plugin: servicenow.itsm.now
+
 instance:
   # Your ServiceNow instance URL (e.g., dev12345.service-now.com)
   host: "{{ snow_instance }}"
