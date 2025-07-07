@@ -25,7 +25,7 @@
     # - cmdb_ci_web_server (for web servers)
     # You can find available class names in your ServiceNow instance under "Configuration > CI Class Manager"
     # or by inspecting the 'sys_db_object' table (filter for tables starting with 'cmdb_ci_').
-    cmdb_ci_class_name: "cmdb_ci_server" # Default to servers, change as needed
+    # cmdb_ci_class_name: "cmdb_ci_server" # Default to servers, change as needed
 
   tasks:
     - name: Gather current date and time facts
