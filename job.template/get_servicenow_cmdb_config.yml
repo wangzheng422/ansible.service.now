@@ -53,16 +53,16 @@
           # - manufacturer.name: "= Dell Inc."
           #   install_status: "= installed"
           - manufacturer.name: "STARTSWITH Dell"
-        return_fields: # Specify fields to retrieve (these might vary by class)
-          - name
-          - ip_address
-          - os
-          - manufacturer
-          - model_id
-          - serial_number
-          - asset_tag
-          - sys_class_name
-          - sys_id
+        # return_fields: # Specify fields to retrieve (these might vary by class)
+        #   - name
+        #   - ip_address
+        #   - os
+        #   - manufacturer
+        #   - model_id
+        #   - serial_number
+        #   - asset_tag
+        #   - sys_class_name
+        #   - sys_id
       register: cmdb_servers
 
     - name: Debug cmdb_servers
@@ -70,164 +70,171 @@
         var: cmdb_servers
 
     # example output json, if no return_fields defined.
-            #     {
-            #     "asset": "c3c1ba8837f3100044e0bfc8bcbe5da4",
-            #     "asset_tag": "P1000173",
-            #     "assigned": "2024-11-16 07:00:00",
-            #     "assigned_to": "",
-            #     "assignment_group": "",
-            #     "attachments": [],
-            #     "attestation_score": "",
-            #     "attestation_status": "",
-            #     "attested": "false",
-            #     "attested_by": "",
-            #     "attested_date": "",
-            #     "attributes": "",
-            #     "business_unit": "",
-            #     "can_print": "false",
-            #     "category": "Do not migrate to asset",
-            #     "cd_rom": "false",
-            #     "cd_speed": "-1",
-            #     "change_control": "",
-            #     "chassis_type": "",
-            #     "checked_in": "",
-            #     "checked_out": "",
-            #     "classification": "Production",
-            #     "comments": "",
-            #     "company": "e7c1f3d53790200044e0bfc8bcbe5deb",
-            #     "correlation_id": "",
-            #     "cost": "2160",
-            #     "cost_cc": "USD",
-            #     "cost_center": "d9d0a971c0a80a641c20b13d99a48576",
-            #     "cpu_core_count": "",
-            #     "cpu_core_thread": "",
-            #     "cpu_count": "1",
-            #     "cpu_manufacturer": "7aad6d00c611228400f00e0f80b67d2d",
-            #     "cpu_name": "",
-            #     "cpu_speed": "3192",
-            #     "cpu_type": "GenuineIntel",
-            #     "default_gateway": "",
-            #     "delivery_date": "",
-            #     "department": "",
-            #     "discovery_source": "",
-            #     "disk_space": "120",
-            #     "dns_domain": "",
-            #     "dr_backup": "",
-            #     "due": "",
-            #     "due_in": "",
-            #     "duplicate_of": "",
-            #     "environment": "",
-            #     "fault_count": "0",
-            #     "firewall_status": "Intranet",
-            #     "first_discovered": "",
-            #     "floppy": "",
-            #     "form_factor": "",
-            #     "fqdn": "",
-            #     "gl_account": "",
-            #     "hardware_status": "",
-            #     "hardware_substatus": "",
-            #     "host_name": "",
-            #     "install_date": "2024-07-03 08:00:00",
-            #     "install_status": "installed",
-            #     "internet_facing": "false",
-            #     "invoice_number": "",
-            #     "ip_address": "",
-            #     "justification": "",
-            #     "last_discovered": "",
-            #     "lease_id": "",
-            #     "life_cycle_stage": "",
-            #     "life_cycle_stage_status": "",
-            #     "location": "f48b23070a0a0ba7001d16a64c67589a",
-            #     "mac_address": "",
-            #     "maintenance_schedule": "",
-            #     "managed_by": "f298d2d2c611227b0106c6be7f154bc8",
-            #     "managed_by_group": "",
-            #     "manufacturer": "b7e7d7d8c0a8016900a5d7f291acce5c",
-            #     "model_id": "47aa6b3f3763100044e0bfc8bcbe5d76",
-            #     "model_number": "",
-            #     "monitor": "false",
-            #     "most_frequent_user": "",
-            #     "name": "Service-now Production Sacramento",
-            #     "object_id": "",
-            #     "operational_status": "operational",
-            #     "order_date": "",
-            #     "os": "Linux Red Hat",
-            #     "os_address_width": "",
-            #     "os_domain": "",
-            #     "os_service_pack": "",
-            #     "os_version": "Enterprise Server 3",
-            #     "owned_by": "",
-            #     "po_number": "",
-            #     "product_instance_id": "",
-            #     "purchase_date": "",
-            #     "ram": "-1",
-            #     "schedule": "",
-            #     "serial_number": "",
-            #     "short_description": "Glide Production ",
-            #     "skip_sync": "false",
-            #     "start_date": "",
-            #     "subcategory": "",
-            #     "support_group": "",
-            #     "supported_by": "",
-            #     "sys_class_name": "cmdb_ci_server",
-            #     "sys_class_path": "/!!/!2/!(/!!",
-            #     "sys_created_by": "glide.maint",
-            #     "sys_created_on": "2005-05-24 20:37:13",
-            #     "sys_domain": "global",
-            #     "sys_domain_path": "/",
-            #     "sys_id": "106c5c13c61122750194a1e96cfde951",
-            #     "sys_mod_count": "26",
-            #     "sys_tags": "",
-            #     "sys_updated_by": "system",
-            #     "sys_updated_on": "2025-05-01 01:16:18",
-            #     "unverified": "false",
-            #     "used_for": "",
-            #     "vendor": "b7e7d7d8c0a8016900a5d7f291acce5c",
-            #     "virtual": "false",
-            #     "warranty_expiration": ""
-            # },
+# TASK [Debug cmdb_servers] ******************************************************
+# ok: [localhost] => {
+#     "cmdb_servers": {
+#         "changed": false,
+#         "failed": false,
+#         "records": [
+#             {
+#                 "asset": "c3c1ba8837f3100044e0bfc8bcbe5da4",
+#                 "asset_tag": "P1000173",
+#                 "assigned": "2024-11-16 07:00:00",
+#                 "assigned_to": "",
+#                 "assignment_group": "",
+#                 "attachments": [],
+#                 "attestation_score": "",
+#                 "attestation_status": "",
+#                 "attested": "false",
+#                 "attested_by": "",
+#                 "attested_date": "",
+#                 "attributes": "",
+#                 "business_unit": "",
+#                 "can_print": "false",
+#                 "category": "Do not migrate to asset",
+#                 "cd_rom": "false",
+#                 "cd_speed": "-1",
+#                 "change_control": "",
+#                 "chassis_type": "",
+#                 "checked_in": "",
+#                 "checked_out": "",
+#                 "classification": "Production",
+#                 "comments": "",
+#                 "company": "e7c1f3d53790200044e0bfc8bcbe5deb",
+#                 "correlation_id": "",
+#                 "cost": "2160",
+#                 "cost_cc": "USD",
+#                 "cost_center": "d9d0a971c0a80a641c20b13d99a48576",
+#                 "cpu_core_count": "",
+#                 "cpu_core_thread": "",
+#                 "cpu_count": "1",
+#                 "cpu_manufacturer": "7aad6d00c611228400f00e0f80b67d2d",
+#                 "cpu_name": "",
+#                 "cpu_speed": "3192",
+#                 "cpu_type": "GenuineIntel",
+#                 "default_gateway": "",
+#                 "delivery_date": "",
+#                 "department": "",
+#                 "discovery_source": "",
+#                 "disk_space": "120",
+#                 "dns_domain": "",
+#                 "dr_backup": "",
+#                 "due": "",
+#                 "due_in": "",
+#                 "duplicate_of": "",
+#                 "environment": "",
+#                 "fault_count": "0",
+#                 "firewall_status": "Intranet",
+#                 "first_discovered": "",
+#                 "floppy": "",
+#                 "form_factor": "",
+#                 "fqdn": "",
+#                 "gl_account": "",
+#                 "hardware_status": "",
+#                 "hardware_substatus": "",
+#                 "host_name": "",
+#                 "install_date": "2024-07-03 08:00:00",
+#                 "install_status": "installed",
+#                 "internet_facing": "false",
+#                 "invoice_number": "",
+#                 "ip_address": "",
+#                 "justification": "",
+#                 "last_discovered": "",
+#                 "lease_id": "",
+#                 "life_cycle_stage": "",
+#                 "life_cycle_stage_status": "",
+#                 "location": "f48b23070a0a0ba7001d16a64c67589a",
+#                 "mac_address": "",
+#                 "maintenance_schedule": "",
+#                 "managed_by": "f298d2d2c611227b0106c6be7f154bc8",
+#                 "managed_by_group": "",
+#                 "manufacturer": "b7e7d7d8c0a8016900a5d7f291acce5c",
+#                 "model_id": "47aa6b3f3763100044e0bfc8bcbe5d76",
+#                 "model_number": "",
+#                 "monitor": "false",
+#                 "most_frequent_user": "",
+#                 "name": "Service-now Production Sacramento",
+#                 "object_id": "",
+#                 "operational_status": "operational",
+#                 "order_date": "",
+#                 "os": "Linux Red Hat",
+#                 "os_address_width": "",
+#                 "os_domain": "",
+#                 "os_service_pack": "",
+#                 "os_version": "Enterprise Server 3",
+#                 "owned_by": "",
+#                 "po_number": "",
+#                 "product_instance_id": "",
+#                 "purchase_date": "",
+#                 "ram": "-1",
+#                 "schedule": "",
+#                 "serial_number": "",
+#                 "short_description": "Glide Production ",
+#                 "skip_sync": "false",
+#                 "start_date": "",
+#                 "subcategory": "",
+#                 "support_group": "",
+#                 "supported_by": "",
+#                 "sys_class_name": "cmdb_ci_server",
+#                 "sys_class_path": "/!!/!2/!(/!!",
+#                 "sys_created_by": "glide.maint",
+#                 "sys_created_on": "2005-05-24 20:37:13",
+#                 "sys_domain": "global",
+#                 "sys_domain_path": "/",
+#                 "sys_id": "106c5c13c61122750194a1e96cfde951",
+#                 "sys_mod_count": "26",
+#                 "sys_tags": "",
+#                 "sys_updated_by": "system",
+#                 "sys_updated_on": "2025-05-01 01:16:18",
+#                 "unverified": "false",
+#                 "used_for": "",
+#                 "vendor": "b7e7d7d8c0a8016900a5d7f291acce5c",
+#                 "virtual": "false",
+#                 "warranty_expiration": ""
+#             },
 
-    - name: Prepare CSV header
-      ansible.builtin.set_fact:
-        csv_header: "Name,IP Address,OS,Manufacturer,Model,Serial Number,Asset Tag,Class Name,Sys ID"
 
-    - name: Prepare CSV content
-      ansible.builtin.set_fact:
-        csv_content: |
-          {{ csv_header }}
-          {% for server in cmdb_servers.records %}
-          "{{ server.name | default('') }}","{{ server.ip_address | default('') }}","{{ server.os | default('') }}","{{ server.manufacturer | default('') }}","{{ server.model_id.display_value | default('') }}","{{ server.serial_number | default('') }}","{{ server.asset_tag | default('') }}","{{ server.sys_class_name | default('') }}","{{ server.sys_id | default('') }}"
-          {% endfor %}
+    # - name: Prepare CSV header
+    #   ansible.builtin.set_fact:
+    #     csv_header: "Name,IP Address,OS,Manufacturer,Model,Serial Number,Asset Tag,Class Name,Sys ID"
 
-    - name: Save CMDB server config to CSV file
-      ansible.builtin.copy:
-        content: "{{ csv_content }}"
-        dest: "{{ output_filepath }}"
-        mode: '0644'
-      register: csv_file_result
+    # - name: Prepare CSV content
+    #   ansible.builtin.set_fact:
+    #     csv_content: |
+    #       {{ csv_header }}
+    #       {% for server in cmdb_servers.records %}
+    #       "{{ server.name | default('') }}","{{ server.ip_address | default('') }}","{{ server.os | default('') }}","{{ server.manufacturer | default('') }}","{{ server.model_id.display_value | default('') }}","{{ server.serial_number | default('') }}","{{ server.asset_tag | default('') }}","{{ server.sys_class_name | default('') }}","{{ server.sys_id | default('') }}"
+    #       {% endfor %}
 
-    # - name: Display CSV content
+    # - name: Save CMDB server config to CSV file
+    #   ansible.builtin.copy:
+    #     content: "{{ csv_content }}"
+    #     dest: "{{ output_filepath }}"
+    #     mode: '0644'
+    #   register: csv_file_result
+
+    # # - name: Display CSV content
+    # #   ansible.builtin.debug:
+    # #     msg: "{{ csv_content }}"
+
+    # - name: Display CSV file path
     #   ansible.builtin.debug:
-    #     msg: "{{ csv_content }}"
+    #     msg: "CMDB server configuration saved to: {{ csv_file_result.dest }}"
 
-    - name: Display CSV file path
-      ansible.builtin.debug:
-        msg: "CMDB server configuration saved to: {{ csv_file_result.dest }}"
+    # - name: Upload CSV file to HTTP endpoint using uri module with form-multipart
+    #   ansible.builtin.uri:
+    #     url: http://localhost:13113/upload?path=/
+    #     method: POST
+    #     body_format: form-multipart
+    #     body:
+    #       path: 
+    #         filename: "{{ csv_file_result.dest }}"
+    #     status_code: 303
+    #     return_content: yes
+    #   delegate_to: localhost
+    #   run_once: true
+    #   register: upload_result
 
-    - name: Upload CSV file to HTTP endpoint using uri module with form-multipart
-      ansible.builtin.uri:
-        url: http://141.164.39.187:13113/upload?path=/
-        method: POST
-        body_format: form-multipart
-        body:
-          path: 
-            filename: "{{ csv_file_result.dest }}"
-        status_code: 303
-        return_content: yes
-      delegate_to: localhost
-      run_once: true
-      register: upload_result
-
-    - name: Display upload result
-      ansible.builtin.debug:
-        msg: "Server response: {{ upload_result.content }}"
+    # - name: Display upload result
+    #   ansible.builtin.debug:
+    #     msg: "Server response: {{ upload_result.content }}"
