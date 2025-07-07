@@ -12,6 +12,14 @@
 # Group hosts automatically, according to values of the os column. Filtering ensures
 # that we only see selected operating systems.
 plugin: servicenow.itsm.now
+instance:
+  # Your ServiceNow instance URL (e.g., dev12345.service-now.com)
+  host: "{{ snow_instance }}"
+  # Your ServiceNow username
+  username: "{{ snow_username }}"
+  # Your ServiceNow password
+  password: "{{ snow_password }}"
+
 table: cmdb_ci_server
 query:
   - os: = Linux Red Hat
