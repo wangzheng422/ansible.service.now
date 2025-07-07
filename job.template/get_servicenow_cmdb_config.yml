@@ -13,9 +13,9 @@
     snow_password: "{{ lookup('env', 'SNOW_PASSWORD') | default('your_password') }}"
     
     # Output file path
-    output_dir: "{{ ansible_facts.pwd }}/cmdb_exports"
+    output_dir: "cmdb_exports"
     output_filename: "servicenow_cmdb_servers_{{ ansible_date_time.iso8601 | replace(':', '-') | replace('.', '-') }}.csv"
-    output_filepath: "{{ output_dir }}/{{ output_filename }}"
+    output_filepath: "{{ output_filename }}"
     
     # Specify the CMDB class name to query.
     # Examples:
