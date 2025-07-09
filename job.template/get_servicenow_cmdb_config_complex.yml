@@ -75,8 +75,8 @@
           host: "{{ snow_instance }}"
           username: "{{ snow_username }}"
           password: "{{ snow_password }}"
+        action: get
         api_path: "api/now/table/core_company"
-        method: GET
         query_params:
           sysparm_query: "sys_idIN{{ manufacturer_sys_ids | join(',') }}"
           sysparm_fields: "sys_id,name"
