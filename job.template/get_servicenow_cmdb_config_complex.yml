@@ -76,9 +76,10 @@
           username: "{{ snow_username }}"
           password: "{{ snow_password }}"
         api_path: "api/now/table/core_company"
-        query_params:
-          sysparm_query: "sys_idIN{{ manufacturer_sys_ids | join(',') }}"
-          sysparm_fields: "sys_id,name"
+        sysparm_query: "sys_idIN{{ manufacturer_sys_ids | join(',') }}"
+        columns:
+          - sys_id
+          - name
       register: manufacturers
 
     - name: Debug manufacturers response
