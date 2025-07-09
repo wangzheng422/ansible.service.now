@@ -69,6 +69,14 @@
       ansible.builtin.set_fact:
         manufacturer_sys_ids: "{{ cmdb_servers.records | map(attribute='manufacturer') | unique | list }}"
 
+    - name: Debug manufacturer_sys_ids
+      ansible.builtin.debug:
+        var: manufacturer_sys_ids
+
+    - name: Debug manufacturer_sys_ids length
+      ansible.builtin.debug:
+        msg: "Found {{ manufacturer_sys_ids | length }} unique manufacturer sys_ids"
+
     - name: Get manufacturer names from sys_id
       servicenow.itsm.api_info:
         instance:
@@ -81,26 +89,52 @@
           - sys_id
           - name
       register: manufacturers
+      when: manufacturer_sys_ids | length > 0
 
     - name: Debug manufacturers response
       ansible.builtin.debug:
         var: manufacturers
       when: manufacturers is defined
 
+    - name: Debug manufacturers.records
+      ansible.builtin.debug:
+        var: manufacturers.records
+      when: manufacturers is defined and manufacturers.records is defined
+
+    - name: Debug manufacturers.records length
+      ansible.builtin.debug:
+        msg: "Found {{ manufacturers.records | length }} manufacturer records"
+      when: manufacturers is defined and manufacturers.records is defined
+
     - name: Create a dictionary of manufacturer sys_id to name
       ansible.builtin.set_fact:
         manufacturer_names_map: "{{ manufacturers.records | community.general.dict(key_attribute='sys_id', value_attribute='name') }}"
-      when: manufacturers.records is defined and manufacturers.records | length > 0
+      when:
+        - manufacturers is defined
+        - manufacturers.records is defined
+        - manufacturers.records | length > 0
+
+    - name: Set empty manufacturer names map if no manufacturer sys_ids found
+      ansible.builtin.set_fact:
+        manufacturer_names_map: {}
+      when: manufacturer_sys_ids | length == 0
 
     - name: Set empty manufacturer names map if no manufacturers found
       ansible.builtin.set_fact:
         manufacturer_names_map: {}
-      when: manufacturers.records is not defined or manufacturers.records | length == 0
+      when:
+        - manufacturer_sys_ids | length > 0
+        - (manufacturers is not defined or manufacturers.records is not defined or manufacturers.records | length == 0)
 
     - name: Debug manufacturer_names_map
       ansible.builtin.debug:
         var: manufacturer_names_map
       when: manufacturer_names_map is defined
+
+    - name: Debug manufacturer field from first record
+      ansible.builtin.debug:
+        msg: "First record manufacturer field: {{ cmdb_servers.records[0].manufacturer | default('NOT_FOUND') }}"
+      when: cmdb_servers.records | length > 0
 
     - name: Debug cmdb_servers
       ansible.builtin.debug:
