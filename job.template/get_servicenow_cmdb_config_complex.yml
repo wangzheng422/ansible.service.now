@@ -70,22 +70,32 @@
         manufacturer_sys_ids: "{{ cmdb_servers.records | map(attribute='manufacturer') | unique | list }}"
 
     - name: Get manufacturer names from sys_id
-      servicenow.itsm.table_info:
+      servicenow.itsm.api:
         instance:
           host: "{{ snow_instance }}"
           username: "{{ snow_username }}"
           password: "{{ snow_password }}"
-        table: "core_company"
-        query:
-          sys_id: "IN{{ manufacturer_sys_ids | join(',') }}"
-        return_fields:
-          - sys_id
-          - name
+        api_path: "api/now/table/core_company"
+        method: GET
+        query_params:
+          sysparm_query: "sys_idIN{{ manufacturer_sys_ids | join(',') }}"
+          sysparm_fields: "sys_id,name"
       register: manufacturers
+
+    - name: Debug manufacturers response
+      ansible.builtin.debug:
+        var: manufacturers
+      when: manufacturers is defined
 
     - name: Create a dictionary of manufacturer sys_id to name
       ansible.builtin.set_fact:
-        manufacturer_names_map: "{{ manufacturers.records | community.general.dict(key_attribute='sys_id', value_attribute='name') }}"
+        manufacturer_names_map: "{{ manufacturers.json.result | community.general.dict(key_attribute='sys_id', value_attribute='name') }}"
+      when: manufacturers.json.result is defined and manufacturers.json.result | length > 0
+
+    - name: Set empty manufacturer names map if no manufacturers found
+      ansible.builtin.set_fact:
+        manufacturer_names_map: {}
+      when: manufacturers.json.result is not defined or manufacturers.json.result | length == 0
 
     - name: Debug cmdb_servers
       ansible.builtin.debug:
