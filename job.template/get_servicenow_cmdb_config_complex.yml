@@ -98,21 +98,21 @@
 
     - name: Debug manufacturers.records
       ansible.builtin.debug:
-        var: manufacturers.records
-      when: manufacturers is defined and manufacturers.records is defined
+        var: manufacturers.record
+      when: manufacturers is defined and manufacturers.record is defined
 
     - name: Debug manufacturers.records length
       ansible.builtin.debug:
-        msg: "Found {{ manufacturers.records | length }} manufacturer records"
-      when: manufacturers is defined and manufacturers.records is defined
+        msg: "Found {{ manufacturers.record | length }} manufacturer records"
+      when: manufacturers is defined and manufacturers.record is defined
 
     - name: Create a dictionary of manufacturer sys_id to name
       ansible.builtin.set_fact:
-        manufacturer_names_map: "{{ manufacturers.records | community.general.dict(key_attribute='sys_id', value_attribute='name') }}"
+        manufacturer_names_map: "{{ manufacturers.record | community.general.dict(key_attribute='sys_id', value_attribute='name') }}"
       when:
         - manufacturers is defined
-        - manufacturers.records is defined
-        - manufacturers.records | length > 0
+        - manufacturers.record is defined
+        - manufacturers.record | length > 0
 
     - name: Set empty manufacturer names map if no manufacturer sys_ids found
       ansible.builtin.set_fact:
@@ -124,7 +124,7 @@
         manufacturer_names_map: {}
       when:
         - manufacturer_sys_ids | length > 0
-        - (manufacturers is not defined or manufacturers.records is not defined or manufacturers.records | length == 0)
+        - (manufacturers is not defined or manufacturers.record is not defined or manufacturers.record | length == 0)
 
     - name: Debug manufacturer_names_map
       ansible.builtin.debug:
