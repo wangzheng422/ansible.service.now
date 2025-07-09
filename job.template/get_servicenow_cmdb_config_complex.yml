@@ -97,6 +97,11 @@
         manufacturer_names_map: {}
       when: manufacturers.records is not defined or manufacturers.records | length == 0
 
+    - name: Debug manufacturer_names_map
+      ansible.builtin.debug:
+        var: manufacturer_names_map
+      when: manufacturer_names_map is defined
+
     - name: Debug cmdb_servers
       ansible.builtin.debug:
         var: cmdb_servers
