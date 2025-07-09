@@ -108,7 +108,7 @@
 
     - name: Create a dictionary of manufacturer sys_id to name
       ansible.builtin.set_fact:
-        manufacturer_names_map: "{{ manufacturers.record | community.general.dict(key_attribute='sys_id', value_attribute='name') }}"
+        manufacturer_names_map: "{{ manufacturers.record | items2dict(key_name='sys_id', value_name='name') }}"
       when:
         - manufacturers is defined
         - manufacturers.record is defined
