@@ -65,6 +65,28 @@
           - sys_id
       register: cmdb_servers
 
+    - name: Extract unique manufacturer sys_ids
+      ansible.builtin.set_fact:
+        manufacturer_sys_ids: "{{ cmdb_servers.records | map(attribute='manufacturer') | unique | list }}"
+
+    - name: Get manufacturer names from sys_id
+      servicenow.itsm.table_info:
+        instance:
+          host: "{{ snow_instance }}"
+          username: "{{ snow_username }}"
+          password: "{{ snow_password }}"
+        table: "core_company"
+        query:
+          sys_id: "IN{{ manufacturer_sys_ids | join(',') }}"
+        return_fields:
+          - sys_id
+          - name
+      register: manufacturers
+
+    - name: Create a dictionary of manufacturer sys_id to name
+      ansible.builtin.set_fact:
+        manufacturer_names_map: "{{ manufacturers.records | community.general.dict(key_attribute='sys_id', value_attribute='name') }}"
+
     - name: Debug cmdb_servers
       ansible.builtin.debug:
         var: cmdb_servers
@@ -203,7 +225,7 @@
         csv_content: |
           {{ csv_header }}
           {% for server in cmdb_servers.records %}
-          "{{ server.name | default('') }}","{{ server.ip_address | default('') }}","{{ server.os | default('') }}","{{ server.manufacturer | default('') }}","{{ server.model_id | default('') }}","{{ server.serial_number | default('') }}","{{ server.asset_tag | default('') }}","{{ server.sys_class_name | default('') }}","{{ server.sys_id | default('') }}"
+          "{{ server.name | default('') }}","{{ server.ip_address | default('') }}","{{ server.os | default('') }}","{{ manufacturer_names_map[server.manufacturer] | default(server.manufacturer) }}","{{ server.model_id | default('') }}","{{ server.serial_number | default('') }}","{{ server.asset_tag | default('') }}","{{ server.sys_class_name | default('') }}","{{ server.sys_id | default('') }}"
           {% endfor %}
 
     - name: Save CMDB server config to CSV file
