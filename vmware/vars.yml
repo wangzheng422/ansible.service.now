@@ -41,17 +41,17 @@ ocp_vms:
     num_cpus: 32
     memory_mb: 49152
     disk1_gb: 120
-    mac: "00:50:56:8e:2a:3f"
+    mac: "00:50:56:8e:2a:31"
   - name: "wzh-ocp-master-02"
     num_cpus: 32
     memory_mb: 49152
     disk1_gb: 120
-    mac: "00:50:56:8e:ed:54"
+    mac: "00:50:56:8e:2a:32"
   - name: "wzh-ocp-master-03"
     num_cpus: 32
     memory_mb: 49152
     disk1_gb: 120
-    mac: "00:50:56:8e:02:b4"
+    mac: "00:50:56:8e:2a:33"
 
 # --- 为第二批虚拟机附加的额外硬盘的参数 ---
 batch2_extra_disk_gb: 200
