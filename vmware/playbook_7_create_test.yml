@@ -40,7 +40,7 @@
             state: present
             controller_number: 0
             unit_number: 0
-      loop: "{{ helper_vms }}"
+      loop: "{{ test_vms }}"
 
     # # --- 步骤 2: 使用 vmware_guest 重新配置 VM 以启用 disk.EnableUUID ---
     # - name: "Step 2: Reconfigure VM {{ item.name }} to enable kickstart"

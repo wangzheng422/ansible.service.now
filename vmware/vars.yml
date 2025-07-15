@@ -34,6 +34,14 @@ helper_vms:
     num_cpus: 4
     memory_mb: 8192
     disk1_gb: 80
+    mac: "00:50:56:8e:1f:ab"
+
+test_vms:
+  - name: "wzh-test"
+    num_cpus: 4
+    memory_mb: 8192
+    disk1_gb: 80
+    mac: "00:50:56:8e:1f:ac"
 
 # --- 第二批虚拟机定义 (创建3台) ---
 ocp_vms:
