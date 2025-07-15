@@ -21,7 +21,7 @@
     # - debug:
     #     msg: "{{ v.folder_info }}"
 
-    - name: "Create Batch 2 VM: {{ item.name }}"
+    - name: "Create Batch 2 VM with single network: {{ item.name }}"
       community.vmware.vmware_guest:
         hostname: "{{ vcenter_hostname }}"
         username: "{{ vcenter_username }}"
@@ -45,12 +45,7 @@
         networks:
           - name: "{{ vm_network }}"
             device_type: vmxnet3
-            # **已修改**: 从变量中设置 MAC 地址，如果未定义则忽略。
             mac: "{{ item.mac | default(omit) }}"
-          - name: "{{ vm_network }}"
-            device_type: vmxnet3
-            mac: "{{ item.mac1 }}"
-            when: item.mac1 is defined
         cdrom:
           - type: iso
             iso_path: "{{ ocp_iso_path }}"
@@ -58,6 +53,44 @@
             controller_number: 0
             unit_number: 0
       loop: "{{ ocp_vms }}"
+      when: item.mac1 is not defined
+
+    - name: "Create Batch 2 VM with dual network: {{ item.name }}"
+      community.vmware.vmware_guest:
+        hostname: "{{ vcenter_hostname }}"
+        username: "{{ vcenter_username }}"
+        password: "{{ vcenter_password }}"
+        validate_certs: false
+        datacenter: "{{ vcenter_datacenter }}"
+        cluster: "{{ vcenter_cluster }}"
+        # 如果 vm_folder 变量为空, `default(omit)` 会让 Ansible 忽略此参数。
+        folder: "{{ vm_folder | default(omit) }}"
+        name: "{{ item.name }}"
+        state: poweredoff
+        guest_id: "{{ guest_id }}"
+        hardware:
+          num_cpus: "{{ item.num_cpus }}"
+          memory_mb: "{{ item.memory_mb }}"
+          # nested_virt: true
+        disk:
+          - size_gb: "{{ item.disk1_gb }}"
+            type: thin
+            datastore: "{{ vcenter_datastore }}"
+        networks:
+          - name: "{{ vm_network }}"
+            device_type: vmxnet3
+            mac: "{{ item.mac | default(omit) }}"
+          - name: "{{ vm_network }}"
+            device_type: vmxnet3
+            mac: "{{ item.mac1 }}"
+        cdrom:
+          - type: iso
+            iso_path: "{{ ocp_iso_path }}"
+            state: present
+            controller_number: 0
+            unit_number: 0
+      loop: "{{ ocp_vms }}"
+      when: item.mac1 is defined
 
     # --- 步骤 2: 使用 vmware_guest 重新配置 VM 以启用 disk.EnableUUID ---
     - name: "Step 2: Reconfigure VM {{ item.name }} to enable disk UUID and apply the advanced settings"
